@@ -173,14 +173,14 @@ export function MarketsView() {
   }, [prices, query, category, sortBy]);
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Markets</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Browse all tradable cryptocurrencies on Brock Exchange
+      <div className="mx-auto max-w-2xl px-4">
+        {/* iOS large title */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight">Markets</h1>
+          <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
+            Browse all tradable cryptocurrencies
           </p>
         </motion.div>
 
@@ -208,7 +208,7 @@ export function MarketsView() {
                 onClick={() => setCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   category === cat.id
-                    ? "bg-[#0ea5ff]/15 text-[#0ea5ff] ring-1 ring-[#0ea5ff]/30"
+                    ? "bg-[#0A84FF]/15 text-[#0A84FF] ring-1 ring-[#0ea5ff]/30"
                     : "bg-white/5 text-muted-foreground hover:text-white"
                 }`}
               >
@@ -262,7 +262,7 @@ export function MarketsView() {
                     className="p-1.5 rounded-lg hover:bg-white/5"
                     aria-label="Toggle watchlist"
                   >
-                    <Star className={`w-4 h-4 ${watched ? "fill-[#f5a623] text-[#f5a623]" : "text-muted-foreground"}`} />
+                    <Star className={`w-4 h-4 ${watched ? "fill-[#f5a623] text-[#FF9F0A]" : "text-muted-foreground"}`} />
                   </button>
                 </div>
 
@@ -271,7 +271,7 @@ export function MarketsView() {
                     <div className="text-2xl font-bold text-white tabular-nums">
                       ${formatPrice(price, coin.pair)}
                     </div>
-                    <div className={`text-xs font-medium flex items-center gap-1 ${up ? "text-[#00c853]" : "text-[#ff3b30]"}`}>
+                    <div className={`text-xs font-medium flex items-center gap-1 ${up ? "text-[#30D158]" : "text-[#FF453A]"}`}>
                       {up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                       {up ? "+" : ""}{change.toFixed(2)}%
                     </div>
@@ -283,7 +283,7 @@ export function MarketsView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-[#00c853]/30 text-[#00c853] hover:bg-[#00c853]/10"
+                    className="border-[#30D158]/30 text-[#30D158] hover:bg-[#30D158]/10"
                     onClick={() => navigate("trade")}
                   >
                     Buy
@@ -291,7 +291,7 @@ export function MarketsView() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-[#ff3b30]/30 text-[#ff3b30] hover:bg-[#ff3b30]/10"
+                    className="border-[#FF453A]/30 text-[#FF453A] hover:bg-[#FF453A]/10"
                     onClick={() => navigate("trade")}
                   >
                     Sell
@@ -325,16 +325,16 @@ export function WatchlistView() {
   );
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <Star className="w-7 h-7 text-[#f5a623] fill-[#f5a623]" />
+      <div className="mx-auto max-w-2xl px-4">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight flex items-center gap-2">
+            <Star className="w-7 h-7" style={{ color: '#FF9F0A', fill: '#FF9F0A' }} />
             Watchlist
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Coins you're tracking — click the star to add or remove
+          <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
+            Coins you're tracking
           </p>
         </motion.div>
 
@@ -382,7 +382,7 @@ export function WatchlistView() {
                       <td className="px-5 py-4 text-right text-white tabular-nums">
                         ${formatPrice(price, coin.pair)}
                       </td>
-                      <td className={`px-5 py-4 text-right font-medium ${up ? "text-[#00c853]" : "text-[#ff3b30]"}`}>
+                      <td className={`px-5 py-4 text-right font-medium ${up ? "text-[#30D158]" : "text-[#FF453A]"}`}>
                         {up ? "+" : ""}{change.toFixed(2)}%
                       </td>
                       <td className="px-5 py-4">
@@ -394,7 +394,7 @@ export function WatchlistView() {
                         <div className="flex items-center justify-end gap-2">
                           <Button size="sm" onClick={() => navigate("trade")}>Trade</Button>
                           <Button size="sm" variant="ghost" onClick={() => toggle(coin.symbol)}>
-                            <Star className="w-3.5 h-3.5 fill-[#f5a623] text-[#f5a623]" />
+                            <Star className="w-3.5 h-3.5 fill-[#f5a623] text-[#FF9F0A]" />
                           </Button>
                         </div>
                       </td>
@@ -439,13 +439,13 @@ export function AssetsView() {
   const totalAssets = balance + frozen + totalHoldings;
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white">My Assets</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            UID: <span className="font-mono text-[#0ea5ff]">{user.uid}</span>
+      <div className="mx-auto max-w-2xl px-4">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight">My Assets</h1>
+          <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
+            UID: <span className="font-mono" style={{ color: '#0A84FF' }}>{user.uid}</span>
           </p>
         </motion.div>
 
@@ -457,11 +457,11 @@ export function AssetsView() {
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-xl p-4">
             <div className="text-xs text-muted-foreground">Available Balance</div>
-            <div className="text-xl font-bold text-[#00c853] mt-1">${balance.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+            <div className="text-xl font-bold text-[#30D158] mt-1">${balance.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bx-glass rounded-xl p-4">
             <div className="text-xs text-muted-foreground flex items-center gap-1"><Snowflake className="w-3 h-3" /> Frozen</div>
-            <div className="text-xl font-bold text-[#ff3b30] mt-1">${frozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+            <div className="text-xl font-bold text-[#FF453A] mt-1">${frozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bx-glass rounded-xl p-4">
             <div className="text-xs text-muted-foreground">Coin Holdings</div>
@@ -504,7 +504,7 @@ export function AssetsView() {
                     <td className="px-5 py-4 text-right text-white tabular-nums">{qty.toFixed(6)}</td>
                     <td className="px-5 py-4 text-right text-white tabular-nums">${formatPrice(price, coin.pair)}</td>
                     <td className="px-5 py-4 text-right text-white font-medium tabular-nums">${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                    <td className={`px-5 py-4 text-right ${up ? "text-[#00c853]" : "text-[#ff3b30]"}`}>
+                    <td className={`px-5 py-4 text-right ${up ? "text-[#30D158]" : "text-[#FF453A]"}`}>
                       {up ? "+" : ""}{change.toFixed(2)}%
                     </td>
                     <td className="px-5 py-4 text-right">
@@ -564,23 +564,23 @@ export function DepositView() {
   }
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <ArrowDownToLine className="w-7 h-7 text-[#00c853]" />
+      <div className="mx-auto max-w-md px-4">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight flex items-center gap-2">
+            <ArrowDownToLine className="w-7 h-7" style={{ color: '#30D158' }} />
             Deposit
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Add funds to your Brock Exchange account
+          <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
+            Add funds to your account
           </p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-2xl p-6 space-y-5">
           <div>
             <Label className="text-xs text-muted-foreground">Current Balance</Label>
-            <div className="text-2xl font-bold text-[#00c853] mt-1">
+            <div className="text-2xl font-bold text-[#30D158] mt-1">
               {(Number(user.balance) || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT
             </div>
           </div>
@@ -615,7 +615,7 @@ export function DepositView() {
                 <button
                   key={q}
                   onClick={() => setAmount(String(q))}
-                  className="px-3 py-1 rounded-lg text-xs bg-white/5 text-muted-foreground hover:bg-[#0ea5ff]/15 hover:text-white"
+                  className="px-3 py-1 rounded-lg text-xs bg-white/5 text-muted-foreground hover:bg-[#0A84FF]/15 hover:text-white"
                 >
                   {q}
                 </button>
@@ -688,23 +688,23 @@ export function WithdrawView() {
   const methods = Object.entries(ALL_PAYMENT_METHODS).slice(0, 10);
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <ArrowUpFromLine className="w-7 h-7 text-[#ff3b30]" />
+      <div className="mx-auto max-w-md px-4">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight flex items-center gap-2">
+            <ArrowUpFromLine className="w-7 h-7" style={{ color: '#FF453A' }} />
             Withdraw
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Withdraw funds from your Brock Exchange account
+          <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
+            Withdraw funds from your account
           </p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-2xl p-6 space-y-5">
           <div>
             <Label className="text-xs text-muted-foreground">Available Balance</Label>
-            <div className="text-2xl font-bold text-[#00c853] mt-1">{balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT</div>
+            <div className="text-2xl font-bold text-[#30D158] mt-1">{balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT</div>
           </div>
 
           <div>
@@ -747,7 +747,7 @@ export function WithdrawView() {
                 <button
                   key={i}
                   onClick={() => setAmount(String(Math.min(q, balance)))}
-                  className="px-3 py-1 rounded-lg text-xs bg-white/5 text-muted-foreground hover:bg-[#0ea5ff]/15 hover:text-white"
+                  className="px-3 py-1 rounded-lg text-xs bg-white/5 text-muted-foreground hover:bg-[#0A84FF]/15 hover:text-white"
                 >
                   {i === 3 ? "MAX" : q}
                 </button>
@@ -803,15 +803,15 @@ export function HistoryView() {
   }
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <HistoryIcon className="w-7 h-7 text-[#0ea5ff]" />
+      <div className="mx-auto max-w-2xl px-4">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight flex items-center gap-2">
+            <HistoryIcon className="w-7 h-7" style={{ color: '#0A84FF' }} />
             History
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
             Your trading history and transaction log
           </p>
         </motion.div>
@@ -827,7 +827,7 @@ export function HistoryView() {
               {loading ? (
                 <div className="p-12 text-center text-muted-foreground"><Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading...</div>
               ) : trades.length === 0 ? (
-                <div className="p-12 text-center text-muted-foreground">No trades yet. <button className="text-[#0ea5ff]" onClick={() => navigate("trade")}>Start trading</button></div>
+                <div className="p-12 text-center text-muted-foreground">No trades yet. <button className="text-[#0A84FF]" onClick={() => navigate("trade")}>Start trading</button></div>
               ) : (
                 <table className="w-full text-sm">
                   <thead className="bg-white/[0.02] border-b border-white/5">
@@ -846,19 +846,19 @@ export function HistoryView() {
                       <tr key={t.id} className="border-b border-white/5 hover:bg-white/[0.02]">
                         <td className="px-4 py-3 text-white font-medium">{t.symbol}</td>
                         <td className="px-4 py-3">
-                          <Badge className={t.direction === "UP" ? "bg-[#00c853]/15 text-[#00c853]" : "bg-[#ff3b30]/15 text-[#ff3b30]"}>
+                          <Badge className={t.direction === "UP" ? "bg-[#30D158]/15 text-[#30D158]" : "bg-[#FF453A]/15 text-[#FF453A]"}>
                             {t.direction}
                           </Badge>
                         </td>
                         <td className="px-4 py-3 text-muted-foreground">{t.duration}s</td>
                         <td className="px-4 py-3 text-right text-white tabular-nums">{Number(t.amount).toFixed(2)}</td>
-                        <td className={`px-4 py-3 text-right tabular-nums font-medium ${Number(t.profit) >= 0 ? "text-[#00c853]" : "text-[#ff3b30]"}`}>
+                        <td className={`px-4 py-3 text-right tabular-nums font-medium ${Number(t.profit) >= 0 ? "text-[#30D158]" : "text-[#FF453A]"}`}>
                           {Number(t.profit) >= 0 ? "+" : ""}{Number(t.profit).toFixed(2)}
                         </td>
                         <td className="px-4 py-3">
                           <Badge variant="outline" className={
-                            t.result === "WIN" ? "border-[#00c853]/30 text-[#00c853]" :
-                            t.result === "LOSE" ? "border-[#ff3b30]/30 text-[#ff3b30]" :
+                            t.result === "WIN" ? "border-[#30D158]/30 text-[#30D158]" :
+                            t.result === "LOSE" ? "border-[#FF453A]/30 text-[#FF453A]" :
                             "border-white/10 text-muted-foreground"
                           }>
                             {t.result}
@@ -896,7 +896,7 @@ export function HistoryView() {
                     {transactions.map((t) => (
                       <tr key={t.id} className="border-b border-white/5 hover:bg-white/[0.02]">
                         <td className="px-4 py-3">
-                          <Badge variant="outline" className={t.kind === "Deposit" ? "border-[#00c853]/30 text-[#00c853]" : "border-[#ff3b30]/30 text-[#ff3b30]"}>
+                          <Badge variant="outline" className={t.kind === "Deposit" ? "border-[#30D158]/30 text-[#30D158]" : "border-[#FF453A]/30 text-[#FF453A]"}>
                             {t.kind}
                           </Badge>
                         </td>
@@ -904,9 +904,9 @@ export function HistoryView() {
                         <td className="px-4 py-3 text-muted-foreground">{t.method || "—"}</td>
                         <td className="px-4 py-3">
                           <Badge className={
-                            t.status === "APPROVED" ? "bg-[#00c853]/15 text-[#00c853]" :
-                            t.status === "PENDING" ? "bg-[#f5a623]/15 text-[#f5a623]" :
-                            "bg-[#ff3b30]/15 text-[#ff3b30]"
+                            t.status === "APPROVED" ? "bg-[#30D158]/15 text-[#30D158]" :
+                            t.status === "PENDING" ? "bg-[#FF9F0A]/15 text-[#FF9F0A]" :
+                            "bg-[#FF453A]/15 text-[#FF453A]"
                           }>
                             {t.status}
                           </Badge>
