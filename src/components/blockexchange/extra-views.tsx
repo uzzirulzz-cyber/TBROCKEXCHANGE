@@ -1114,6 +1114,9 @@ export function ProfileView() {
           <Button variant="outline" className="flex-1" onClick={() => navigate("settings")}>
             <SettingsIcon className="w-4 h-4 mr-2" /> Edit Settings
           </Button>
+          <Button variant="outline" className="flex-1" onClick={() => navigate("kyc")}>
+            <Shield className="w-4 h-4 mr-2" /> Verify Identity
+          </Button>
           <Button variant="ghost" className="text-[#ff3b30] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10" onClick={logout}>
             <LogOut className="w-4 h-4 mr-2" /> Logout
           </Button>

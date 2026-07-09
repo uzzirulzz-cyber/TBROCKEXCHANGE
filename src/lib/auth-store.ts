@@ -16,6 +16,7 @@ export type View =
   | "profile"
   | "notifications"
   | "settings"
+  | "kyc"
   | "admin"
   | "admin-login"
   | "subagent";
@@ -60,7 +61,7 @@ interface AuthState {
 const ALLOWED_VIEWS: View[] = [
   "home", "login", "register", "trade", "wallet",
   "markets", "watchlist", "assets", "deposit", "withdraw",
-  "history", "profile", "notifications", "settings",
+  "history", "profile", "notifications", "settings", "kyc",
   "admin", "admin-login", "subagent",
 ];
 
@@ -74,7 +75,7 @@ function viewFromLocation(): View | null {
     admin: "admin", home: "home", login: "login", register: "register",
     trade: "trade", wallet: "wallet", markets: "markets", watchlist: "watchlist",
     assets: "assets", deposit: "deposit", withdraw: "withdraw", history: "history",
-    profile: "profile", notifications: "notifications", settings: "settings",
+    profile: "profile", notifications: "notifications", settings: "settings", kyc: "kyc",
   };
   return pathMap[path] || null;
 }
@@ -89,7 +90,7 @@ function pushViewToUrl(v: View) {
 
 function gateView(v: View, u: AuthUser | null): View {
   // Auth-required customer views
-  const authRequired: View[] = ["trade", "wallet", "deposit", "withdraw", "history", "profile", "notifications", "settings", "watchlist", "assets"];
+  const authRequired: View[] = ["trade", "wallet", "deposit", "withdraw", "history", "profile", "notifications", "settings", "watchlist", "assets", "kyc"];
   if (authRequired.includes(v) && !u) return "login";
   // Staff trying to access customer views get redirected to their dashboard
   if (authRequired.includes(v) && u && (u.role === "SUB_AGENT" || u.role === "SUPER_ADMIN")) {

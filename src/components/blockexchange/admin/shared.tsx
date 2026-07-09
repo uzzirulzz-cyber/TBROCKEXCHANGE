@@ -28,6 +28,7 @@ export type AdminSection =
   | "trades"
   | "market"
   | "payments"
+  | "kyc"
   | "messaging"
   | "reports"
   | "security"

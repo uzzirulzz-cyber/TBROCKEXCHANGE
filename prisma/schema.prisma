@@ -63,6 +63,8 @@ model User {
   conversationMembers ConversationMember[]
   // Notifications
   notifications      Notification[]
+  // KYC verification documents
+  kycDocuments       KycDocument[]
 }
 
 model Trade {
@@ -225,4 +227,23 @@ model Notification {
   type      String   @default("info") // "info" | "success" | "warning" | "error"
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+// KYC verification documents (passport / driving license / national ID)
+model KycDocument {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  docType      String   // "PASSPORT" | "DRIVING_LICENSE" | "NATIONAL_ID"
+  // Front + back of document + selfie holding document (base64 data URLs)
+  frontImage   String
+  backImage    String?  // optional for passport (single page)
+  selfieImage  String?
+  // Status: "PENDING" | "APPROVED" | "REJECTED"
+  status       String   @default("PENDING")
+  rejectReason String?  // admin provides reason when rejecting
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 }

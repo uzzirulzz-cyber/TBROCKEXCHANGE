@@ -17,7 +17,7 @@ import {
   Home, BarChart3, CandlestickChart, Wallet as WalletIcon,
   User as UserIcon, MoreHorizontal, Star, ArrowDownToLine,
   ArrowUpFromLine, History, Bell, Settings as SettingsIcon,
-  LogOut, X,
+  LogOut, X, ShieldCheck,
 } from "lucide-react";
 
 const PRIMARY_TABS: { label: string; view: View; icon: any; requiresAuth?: boolean }[] = [
@@ -29,6 +29,7 @@ const PRIMARY_TABS: { label: string; view: View; icon: any; requiresAuth?: boole
 ];
 
 const MORE_TABS: { label: string; view: View; icon: any; requiresAuth?: boolean }[] = [
+  { label: "KYC Verify", view: "kyc", icon: ShieldCheck, requiresAuth: true },
   { label: "Watchlist", view: "watchlist", icon: Star, requiresAuth: true },
   { label: "Assets", view: "assets", icon: WalletIcon, requiresAuth: true },
   { label: "Deposit", view: "deposit", icon: ArrowDownToLine, requiresAuth: true },

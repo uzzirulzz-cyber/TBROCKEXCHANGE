@@ -24,6 +24,7 @@ import {
   Settings as SettingsIcon,
   LogOut,
   ArrowLeft,
+  IdCard,
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/blockexchange/logo";
@@ -45,6 +46,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "trades", label: "Trade Management", icon: CandlestickChart, group: "Operations" },
   { id: "market", label: "Market Management", icon: Coins, group: "Operations" },
   { id: "payments", label: "Payments", icon: CreditCard, group: "Operations" },
+  { id: "kyc", label: "KYC Verifications", icon: IdCard, group: "Operations" },
   { id: "messaging", label: "Messaging", icon: Megaphone, group: "Operations" },
   { id: "reports", label: "Reports", icon: BarChart3, group: "System" },
   { id: "security", label: "Security", icon: ShieldCheck, group: "System" },

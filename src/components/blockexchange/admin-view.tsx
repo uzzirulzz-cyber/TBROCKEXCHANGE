@@ -35,6 +35,7 @@ import { AdminWallet } from "./admin/wallet";
 import { AdminTrades } from "./admin/trades";
 import { AdminMarket } from "./admin/market";
 import { AdminPayments } from "./admin/payments";
+import { AdminKyc } from "./admin/kyc";
 import { AdminMessaging } from "./admin/messaging";
 import { AdminReports } from "./admin/reports";
 import { AdminSecurity } from "./admin/security";
@@ -48,6 +49,7 @@ const SECTION_META: Record<AdminSection, { title: string; description: string }>
   trades: { title: "Trade Management", description: "Live trades and trading config" },
   market: { title: "Market Management", description: "Tradable pairs and pricing feed" },
   payments: { title: "Payments", description: "Banks, cards, gateways, and manual ops" },
+  kyc: { title: "KYC Verifications", description: "Review identity documents" },
   messaging: { title: "Messaging", description: "Broadcast, push, email, and popups" },
   reports: { title: "Reports", description: "Aggregated analytics and exports" },
   security: { title: "Security", description: "2FA, roles, IP whitelist, audit logs" },
@@ -172,6 +174,7 @@ export function AdminView() {
               {section === "trades" && <AdminTrades userId={user.id} syncTick={syncTick} />}
               {section === "market" && <AdminMarket />}
               {section === "payments" && <AdminPayments />}
+              {section === "kyc" && <AdminKyc userId={user.id} syncTick={syncTick} />}
               {section === "messaging" && <AdminMessaging />}
               {section === "reports" && <AdminReports />}
               {section === "security" && <AdminSecurity />}

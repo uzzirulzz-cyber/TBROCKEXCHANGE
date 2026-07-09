@@ -19,6 +19,7 @@ import {
   MarketsView, WatchlistView, AssetsView, DepositView, WithdrawView,
   HistoryView, ProfileView, NotificationsView, SettingsView,
 } from "@/components/blockexchange/extra-views";
+import { KycView } from "@/components/blockexchange/kyc-view";
 
 export default function Home() {
   const { view, user, navigate, hydrated, syncFromUrl, setView } = useAuth();
@@ -37,7 +38,7 @@ export default function Home() {
   // Safety: keep view state in sync with auth state.
   useEffect(() => {
     if (!hydrated) return;
-    const authRequired = ["trade", "wallet", "deposit", "withdraw", "history", "profile", "notifications", "settings", "watchlist", "assets"];
+    const authRequired = ["trade", "wallet", "deposit", "withdraw", "history", "profile", "notifications", "settings", "watchlist", "assets", "kyc"];
     if (authRequired.includes(view) && !user) navigate("login");
     if (authRequired.includes(view) && user && user.role !== "CUSTOMER") {
       navigate(user.role === "SUPER_ADMIN" ? "admin" : "subagent");
@@ -97,6 +98,7 @@ export default function Home() {
         {view === "profile" && <ProfileView />}
         {view === "notifications" && <NotificationsView />}
         {view === "settings" && <SettingsView />}
+        {view === "kyc" && <KycView />}
       </div>
       <Footer />
       <SupportChatWidget />
