@@ -934,7 +934,7 @@ export function ProfileView() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) {
-    return <main className="flex-1 pt-20 flex items-center justify-center"><Button onClick={() => navigate("login")}>Please login</Button></main>;
+    return <main className="flex-1 pt-20 flex items-center justify-center bg-black"><Button onClick={() => navigate("login")}>Please login</Button></main>;
   }
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -950,7 +950,6 @@ export function ProfileView() {
     }
     setUploading(true);
     try {
-      // Convert to base64 data URL
       const reader = new FileReader();
       reader.onload = async () => {
         const photo = reader.result as string;
@@ -1001,126 +1000,230 @@ export function ProfileView() {
     }
   }
 
-  const fields = [
-    { icon: UserIcon, label: "Full Name", value: user.name },
-    { icon: Mail, label: "Email", value: user.email },
-    { icon: Phone, label: "Phone", value: user.phone || "Not set" },
-    { icon: Globe, label: "Country", value: user.country || "Not set" },
-    { icon: Shield, label: "KYC Status", value: user.kycStatus || "Not verified" },
-    { icon: Lock, label: "Account Status", value: user.status || "Active" },
-  ];
-
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Profile</h1>
-          <p className="text-sm text-muted-foreground mt-1">Your account information</p>
+      <div className="mx-auto max-w-md px-4">
+
+        {/* iOS-style large title */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight">Profile</h1>
         </motion.div>
 
-        {/* Profile card with photo */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-2xl p-6 mb-6">
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* Photo */}
-            <div className="relative group">
-              <div className="w-24 h-24 rounded-full overflow-hidden bx-blue-gradient flex items-center justify-center text-3xl font-bold text-white ring-2 ring-white/10">
-                {user.photoUrl ? (
-                  <img src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
-                ) : (
-                  user.name.charAt(0).toUpperCase()
-                )}
-              </div>
-              {/* Upload button overlay */}
+        {/* Profile hero card — iOS-style */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-3xl p-6 mb-6 text-center"
+          style={{ background: "linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%)", border: "1px solid #38383A" }}
+        >
+          {/* Photo */}
+          <div className="relative inline-block group mb-4">
+            <div
+              className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center text-3xl font-bold text-white ring-4 ring-white/5"
+              style={{ background: "linear-gradient(135deg, #0A84FF, #0D47A1)" }}
+            >
+              {user.photoUrl ? (
+                <img src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                user.name.charAt(0).toUpperCase()
+              )}
+            </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+              aria-label="Upload photo"
+            >
+              {uploading ? (
+                <Loader2 className="w-6 h-6 text-white animate-spin" />
+              ) : (
+                <Camera className="w-6 h-6 text-white" />
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+          </div>
+
+          <h2 className="text-xl font-bold text-white">{user.name}</h2>
+          <div className="text-sm text-[#8E8E93] mt-0.5">{user.email}</div>
+
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <span
+              className="px-2.5 py-1 rounded-full text-xs font-semibold"
+              style={{ background: "rgba(10,132,255,0.15)", color: "#0A84FF" }}
+            >
+              {user.role === "SUPER_ADMIN" ? "Super Admin" : user.role === "SUB_AGENT" ? "Agent" : "Customer"}
+            </span>
+            {user.role === "CUSTOMER" && (
+              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#2C2C2E] text-[#8E8E93]">
+                VIP {user.vipLevel}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="px-4 py-2 rounded-full text-xs font-semibold transition-colors"
+              style={{ background: "rgba(10,132,255,0.15)", color: "#0A84FF" }}
+            >
+              <Camera className="w-3.5 h-3.5 inline mr-1.5" />
+              {user.photoUrl ? "Change Photo" : "Upload Photo"}
+            </button>
+            {user.photoUrl && (
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={handlePhotoRemove}
                 disabled={uploading}
-                className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                aria-label="Upload photo"
+                className="px-4 py-2 rounded-full text-xs font-semibold transition-colors"
+                style={{ background: "rgba(255,69,58,0.15)", color: "#FF453A" }}
               >
-                {uploading ? (
-                  <Loader2 className="w-6 h-6 text-white animate-spin" />
-                ) : (
-                  <Camera className="w-6 h-6 text-white" />
-                )}
+                Remove
               </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
-            </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-xl font-bold text-white">{user.name}</h2>
-              <div className="text-sm text-muted-foreground">{user.email}</div>
-              <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
-                <Badge className="bg-[#0ea5ff]/15 text-[#0ea5ff]">
-                  {user.role === "SUPER_ADMIN" ? "Super Admin" : user.role === "SUB_AGENT" ? "Agent" : "Customer"}
-                </Badge>
-                {user.role === "CUSTOMER" && (
-                  <Badge variant="outline" className="border-white/10 text-muted-foreground">VIP {user.vipLevel}</Badge>
-                )}
-              </div>
-              <div className="flex items-center gap-2 mt-3 justify-center sm:justify-start">
-                <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-                  <Camera className="w-3.5 h-3.5 mr-1.5" />
-                  {user.photoUrl ? "Change Photo" : "Upload Photo"}
-                </Button>
-                {user.photoUrl && (
-                  <Button size="sm" variant="ghost" onClick={handlePhotoRemove} disabled={uploading} className="text-[#ff3b30]">
-                    Remove
-                  </Button>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </motion.div>
 
-        {/* UID card */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bx-glass rounded-2xl p-5 mb-6 flex items-center justify-between">
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wider">Your UID</div>
-            <div className="text-lg font-mono text-[#0ea5ff] mt-1">
-              {showUid ? user.uid : "••••••••••••"}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button size="sm" variant="ghost" onClick={() => setShowUid((v) => !v)}>
-              {showUid ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
-            <CopyButton text={user.uid} />
-          </div>
-        </motion.div>
-
-        {/* Info fields */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bx-glass rounded-2xl p-6 mb-6">
-          <h3 className="font-semibold text-white mb-4">Account Details</h3>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {fields.map((f) => (
-              <div key={f.label} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02]">
-                <f.icon className="w-4 h-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
-                  <div className="text-xs text-muted-foreground">{f.label}</div>
-                  <div className="text-sm text-white truncate">{f.value}</div>
+        {/* UID card — iOS-style */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-2xl overflow-hidden mb-6"
+          style={{ background: "#1C1C1E", border: "1px solid #38383A" }}
+        >
+          <button
+            onClick={() => setShowUid((v) => !v)}
+            className="w-full flex items-center justify-between px-4 py-3.5"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(10,132,255,0.15)" }}>
+                <UserIcon className="w-4 h-4" style={{ color: "#0A84FF" }} />
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-[#8E8E93] uppercase tracking-wider">Your UID</div>
+                <div className="text-base font-mono mt-0.5" style={{ color: "#0A84FF" }}>
+                  {showUid ? user.uid : "••••••••••••"}
                 </div>
               </div>
-            ))}
+            </div>
+            {showUid ? <EyeOff className="w-4 h-4 text-[#8E8E93]" /> : <Eye className="w-4 h-4 text-[#8E8E93]" />}
+          </button>
+        </motion.div>
+
+        {/* iOS-style grouped list — Account Details */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6"
+        >
+          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Account Details</div>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            {[
+              { icon: Mail, label: "Email", value: user.email, color: "#0A84FF" },
+              { icon: Phone, label: "Phone", value: user.phone || "Not set", color: "#30D158" },
+              { icon: Globe, label: "Country", value: user.country || "Not set", color: "#BF5AF2" },
+              { icon: Shield, label: "KYC Status", value: user.kycStatus || "Not verified", color: user.kycStatus === "VERIFIED" ? "#30D158" : "#FF9F0A" },
+              { icon: Lock, label: "Account Status", value: user.status || "Active", color: "#30D158" },
+            ].map((f, i, arr) => {
+              const Icon = f.icon;
+              const isLast = i === arr.length - 1;
+              return (
+                <div
+                  key={f.label}
+                  className="flex items-center gap-3 px-4 py-3.5"
+                  style={{
+                    borderBottom: isLast ? "none" : "1px solid #38383A",
+                  }}
+                >
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${f.color}22` }}>
+                    <Icon className="w-4 h-4" style={{ color: f.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-[#8E8E93]">{f.label}</div>
+                    <div className="text-sm text-white truncate">{f.value}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
-        <div className="flex gap-3">
-          <Button variant="outline" className="flex-1" onClick={() => navigate("settings")}>
-            <SettingsIcon className="w-4 h-4 mr-2" /> Edit Settings
-          </Button>
-          <Button variant="outline" className="flex-1" onClick={() => navigate("kyc")}>
-            <Shield className="w-4 h-4 mr-2" /> Verify Identity
-          </Button>
-          <Button variant="ghost" className="text-[#ff3b30] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10" onClick={logout}>
-            <LogOut className="w-4 h-4 mr-2" /> Logout
-          </Button>
-        </div>
+        {/* iOS-style grouped list — Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6"
+        >
+          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Quick Actions</div>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <button
+              onClick={() => navigate("settings")}
+              className="w-full flex items-center gap-3 px-4 py-3.5"
+              style={{ borderBottom: "1px solid #38383A" }}
+            >
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(10,132,255,0.15)" }}>
+                <SettingsIcon className="w-4 h-4" style={{ color: "#0A84FF" }} />
+              </div>
+              <span className="flex-1 text-left text-white text-base">Settings</span>
+              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button
+              onClick={() => navigate("kyc")}
+              className="w-full flex items-center gap-3 px-4 py-3.5"
+              style={{ borderBottom: "1px solid #38383A" }}
+            >
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(48,209,88,0.15)" }}>
+                <Shield className="w-4 h-4" style={{ color: "#30D158" }} />
+              </div>
+              <span className="flex-1 text-left text-white text-base">Verify Identity (KYC)</span>
+              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button
+              onClick={() => navigate("notifications")}
+              className="w-full flex items-center gap-3 px-4 py-3.5"
+            >
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(255,159,10,0.15)" }}>
+                <Bell className="w-4 h-4" style={{ color: "#FF9F0A" }} />
+              </div>
+              <span className="flex-1 text-left text-white text-base">Notifications</span>
+              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Logout button — iOS-style */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="rounded-2xl overflow-hidden"
+          style={{ background: "#1C1C1E", border: "1px solid #38383A" }}
+        >
+          <button
+            onClick={logout}
+            className="w-full px-4 py-3.5 text-center text-base font-medium"
+            style={{ color: "#FF453A" }}
+          >
+            <LogOut className="w-4 h-4 inline mr-2" />
+            Logout
+          </button>
+        </motion.div>
       </div>
     </main>
   );
@@ -1344,152 +1447,211 @@ export function SettingsView() {
   }
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <SettingsIcon className="w-7 h-7 text-[#0ea5ff]" />
-            Settings
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your account preferences</p>
+      <div className="mx-auto max-w-md px-4">
+        {/* iOS large title */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
+          <h1 className="text-[34px] font-bold text-white tracking-tight">Settings</h1>
         </motion.div>
 
         {/* Profile Information */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-2xl p-6 mb-6 space-y-5">
-          <h3 className="font-semibold text-white">Profile Information</h3>
-
-          <div>
-            <Label className="text-xs text-muted-foreground">Full Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
-          </div>
-
-          <div>
-            <Label className="text-xs text-muted-foreground">Email (cannot change)</Label>
-            <Input value={user.email} disabled className="mt-1 bg-white/[0.02] border-white/10 text-muted-foreground" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs text-muted-foreground">Phone</Label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
+          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Profile Information</div>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <div className="px-4 py-3.5" style={{ borderBottom: "1px solid #38383A" }}>
+              <div className="text-xs text-[#8E8E93] mb-1.5">Full Name</div>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="w-full bg-transparent text-white text-base outline-none"
+              />
             </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Country</Label>
-              <Input value={country} onChange={(e) => setCountry(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+            <div className="px-4 py-3.5" style={{ borderBottom: "1px solid #38383A" }}>
+              <div className="text-xs text-[#8E8E93] mb-1.5">Email (cannot change)</div>
+              <div className="text-white text-base opacity-50">{user.email}</div>
             </div>
-          </div>
-
-          <Button onClick={handleSave} disabled={saving} className="bg-gradient-to-r from-[#2196F3] to-[#0D47A1] text-white">
-            {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-            Save Changes
-          </Button>
-        </motion.div>
-
-        {/* Security */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bx-glass rounded-2xl p-6 mb-6 space-y-4">
-          <h3 className="font-semibold text-white">Security</h3>
-
-          {/* Password change */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]">
-            <div className="flex items-center gap-3">
-              <Lock className="w-4 h-4 text-muted-foreground" />
-              <div>
-                <div className="text-sm text-white">Password</div>
-                <div className="text-xs text-muted-foreground">Change your password</div>
-              </div>
+            <div className="px-4 py-3.5" style={{ borderBottom: "1px solid #38383A" }}>
+              <div className="text-xs text-[#8E8E93] mb-1.5">Phone</div>
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Not set"
+                className="w-full bg-transparent text-white text-base outline-none"
+              />
             </div>
-            <Button variant="outline" size="sm" onClick={() => setShowPwd((v) => !v)}>
-              {showPwd ? "Cancel" : "Change"}
-            </Button>
-          </div>
-          {showPwd && (
-            <div className="space-y-3 p-4 rounded-lg bg-white/[0.02]">
-              <div>
-                <Label className="text-xs text-muted-foreground">Current Password</Label>
-                <Input type="password" value={currentPwd} onChange={(e) => setCurrentPwd(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">New Password</Label>
-                <Input type="password" value={newPwd} onChange={(e) => setNewPwd(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Confirm New Password</Label>
-                <Input type="password" value={confirmPwd} onChange={(e) => setConfirmPwd(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
-              </div>
-              <Button size="sm" onClick={handlePasswordChange} disabled={changingPwd} className="bg-gradient-to-r from-[#2196F3] to-[#0D47A1] text-white">
-                {changingPwd ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <KeyRound className="w-3.5 h-3.5 mr-1.5" />}
-                Update Password
-              </Button>
-            </div>
-          )}
-
-          {/* 2FA */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]">
-            <div className="flex items-center gap-3">
-              <Shield className="w-4 h-4 text-muted-foreground" />
-              <div>
-                <div className="text-sm text-white">Two-Factor Authentication</div>
-                <div className="text-xs text-muted-foreground">
-                  {user.twoFactorEnabled ? "Enabled — recovery codes generated" : "Add an extra layer of security"}
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {twoFactorLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
-              <Switch
-                checked={user.twoFactorEnabled ?? false}
-                onCheckedChange={handle2FAToggle}
-                disabled={twoFactorLoading}
+            <div className="px-4 py-3.5">
+              <div className="text-xs text-[#8E8E93] mb-1.5">Country</div>
+              <input
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="Not set"
+                className="w-full bg-transparent text-white text-base outline-none"
               />
             </div>
           </div>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full mt-3 py-3.5 rounded-2xl text-base font-semibold transition-opacity"
+            style={{ background: "#0A84FF", color: "#fff" }}
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> : <Save className="w-4 h-4 inline mr-2" />}
+            Save Changes
+          </button>
+        </motion.div>
 
-          {/* Recovery codes (shown after enabling) */}
+        {/* Security */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6">
+          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Security</div>
+
+          {/* Password row */}
+          <div className="rounded-2xl overflow-hidden mb-3" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <button
+              onClick={() => setShowPwd((v) => !v)}
+              className="w-full flex items-center gap-3 px-4 py-3.5"
+            >
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(10,132,255,0.15)" }}>
+                <Lock className="w-4 h-4" style={{ color: "#0A84FF" }} />
+              </div>
+              <div className="flex-1 text-left">
+                <div className="text-base text-white">Password</div>
+                <div className="text-xs text-[#8E8E93]">Change your password</div>
+              </div>
+              <span className="text-sm" style={{ color: "#0A84FF" }}>{showPwd ? "Cancel" : "Change"}</span>
+            </button>
+          </div>
+
+          {/* Password form */}
+          {showPwd && (
+            <div className="rounded-2xl overflow-hidden mb-3" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+              <div className="px-4 py-3" style={{ borderBottom: "1px solid #38383A" }}>
+                <div className="text-xs text-[#8E8E93] mb-1">Current Password</div>
+                <input
+                  type="password"
+                  value={currentPwd}
+                  onChange={(e) => setCurrentPwd(e.target.value)}
+                  placeholder="Enter current password"
+                  className="w-full bg-transparent text-white text-base outline-none"
+                />
+              </div>
+              <div className="px-4 py-3" style={{ borderBottom: "1px solid #38383A" }}>
+                <div className="text-xs text-[#8E8E93] mb-1">New Password</div>
+                <input
+                  type="password"
+                  value={newPwd}
+                  onChange={(e) => setNewPwd(e.target.value)}
+                  placeholder="Min. 6 characters"
+                  className="w-full bg-transparent text-white text-base outline-none"
+                />
+              </div>
+              <div className="px-4 py-3">
+                <div className="text-xs text-[#8E8E93] mb-1">Confirm New Password</div>
+                <input
+                  type="password"
+                  value={confirmPwd}
+                  onChange={(e) => setConfirmPwd(e.target.value)}
+                  placeholder="Re-enter new password"
+                  className="w-full bg-transparent text-white text-base outline-none"
+                />
+              </div>
+              <button
+                onClick={handlePasswordChange}
+                disabled={changingPwd}
+                className="w-full py-3.5 text-base font-semibold transition-opacity"
+                style={{ background: "#0A84FF", color: "#fff" }}
+              >
+                {changingPwd ? <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> : <KeyRound className="w-4 h-4 inline mr-2" />}
+                Update Password
+              </button>
+            </div>
+          )}
+
+          {/* 2FA row */}
+          <div className="rounded-2xl overflow-hidden mb-3" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(48,209,88,0.15)" }}>
+                <Shield className="w-4 h-4" style={{ color: "#30D158" }} />
+              </div>
+              <div className="flex-1">
+                <div className="text-base text-white">Two-Factor Authentication</div>
+                <div className="text-xs text-[#8E8E93]">
+                  {user.twoFactorEnabled ? "Enabled" : "Add an extra layer of security"}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {twoFactorLoading && <Loader2 className="w-4 h-4 animate-spin text-[#8E8E93]" />}
+                <Switch
+                  checked={user.twoFactorEnabled ?? false}
+                  onCheckedChange={handle2FAToggle}
+                  disabled={twoFactorLoading}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Recovery codes */}
           {recoveryCodes && recoveryCodes.length > 0 && (
-            <div className="p-4 rounded-lg bg-[#f5a623]/10 border border-[#f5a623]/30">
+            <div className="rounded-2xl p-4 mb-3" style={{ background: "rgba(255,159,10,0.1)", border: "1px solid rgba(255,159,10,0.3)" }}>
               <div className="flex items-start gap-2 mb-3">
-                <AlertCircle className="w-4 h-4 text-[#f5a623] shrink-0 mt-0.5" />
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#FF9F0A" }} />
                 <div>
-                  <div className="text-sm font-semibold text-[#f5a623]">Save your recovery codes</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
+                  <div className="text-sm font-semibold" style={{ color: "#FF9F0A" }}>Save your recovery codes</div>
+                  <div className="text-xs text-[#8E8E93] mt-0.5">
                     Store these safely. You'll need them if you lose access to your device.
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                 {recoveryCodes.map((code, i) => (
-                  <div key={i} className="px-2 py-1.5 rounded bg-white/5 text-white">{code}</div>
+                  <div key={i} className="px-2 py-1.5 rounded text-white" style={{ background: "rgba(0,0,0,0.4)" }}>{code}</div>
                 ))}
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="mt-3"
+              <button
                 onClick={() => {
                   navigator.clipboard?.writeText(recoveryCodes.join("\n"));
                   toast.success("Recovery codes copied to clipboard");
                 }}
+                className="w-full mt-3 py-2 rounded-xl text-sm font-medium"
+                style={{ background: "rgba(255,159,10,0.2)", color: "#FF9F0A" }}
               >
-                <Copy className="w-3.5 h-3.5 mr-1.5" /> Copy All
-              </Button>
+                <Copy className="w-3.5 h-3.5 inline mr-1.5" /> Copy All Codes
+              </button>
             </div>
           )}
         </motion.div>
 
         {/* Session */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bx-glass rounded-2xl p-6">
-          <h3 className="font-semibold text-white mb-4">Session</h3>
-          <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]">
-            <div>
-              <div className="text-sm text-white">UID</div>
-              <div className="text-xs font-mono text-[#0ea5ff]">{user.uid}</div>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="mb-6">
+          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Session</div>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <div className="flex items-center justify-between px-4 py-3.5">
+              <div>
+                <div className="text-xs text-[#8E8E93]">UID</div>
+                <div className="text-base font-mono mt-0.5" style={{ color: "#0A84FF" }}>{user.uid}</div>
+              </div>
+              <CopyButton text={user.uid} />
             </div>
-            <CopyButton text={user.uid} />
           </div>
-          <Button variant="ghost" className="w-full mt-4 text-[#ff3b30] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10" onClick={logout}>
-            <LogOut className="w-4 h-4 mr-2" /> Logout
-          </Button>
+        </motion.div>
+
+        {/* Logout — iOS red button */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-2xl overflow-hidden"
+          style={{ background: "#1C1C1E", border: "1px solid #38383A" }}
+        >
+          <button
+            onClick={logout}
+            className="w-full px-4 py-3.5 text-center text-base font-medium"
+            style={{ color: "#FF453A" }}
+          >
+            <LogOut className="w-4 h-4 inline mr-2" />
+            Logout
+          </button>
         </motion.div>
       </div>
     </main>
