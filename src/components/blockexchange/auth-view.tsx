@@ -40,7 +40,17 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 // Approved countries with fiat currency support (from src/lib/fiat-countries.ts).
 import { FIAT_COUNTRIES, ALL_PAYMENT_METHODS, getMethodsForCountry, getDialCode, getCountryCurrency } from "@/lib/fiat-countries";
 const COUNTRIES = FIAT_COUNTRIES.map((c) => c.name);
-const PHONE_CODES = FIAT_COUNTRIES.map((c) => ({ code: c.dialCode, label: `${c.flag} ${c.dialCode} (${c.code})` }));
+// Build phone code list — dedupe by dial code (keep first country, so +1 shows 🇺🇸 US not 🇨🇦 CA)
+const PHONE_CODES = (() => {
+  const seen = new Set<string>();
+  const out: { code: string; label: string }[] = [];
+  for (const c of FIAT_COUNTRIES) {
+    if (seen.has(c.dialCode)) continue;
+    seen.add(c.dialCode);
+    out.push({ code: c.dialCode, label: `${c.flag} ${c.dialCode} (${c.code})` });
+  }
+  return out;
+})();
 
 const BENEFITS: { label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { label: "Live crypto prices", icon: TrendingUp },
