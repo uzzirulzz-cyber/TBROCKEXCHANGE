@@ -1261,66 +1261,80 @@ export function NotificationsView() {
   };
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+      <div className="mx-auto max-w-md px-4">
+        {/* iOS large title */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6 pt-6">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-              <Bell className="w-7 h-7 text-[#0ea5ff]" />
-              Notifications
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {notifications.filter((n) => !n.read).length} unread
-            </p>
+            <h1 className="text-[34px] font-bold text-white tracking-tight">Notifications</h1>
+            {notifications.length > 0 && (
+              <p className="text-sm mt-1" style={{ color: "#8E8E93" }}>
+                {notifications.filter((n) => !n.read).length} unread
+              </p>
+            )}
           </div>
           {notifications.some((n) => !n.read) && (
-            <Button variant="outline" size="sm" onClick={markAllRead}>
-              <Check className="w-3.5 h-3.5 mr-1.5" /> Mark all read
-            </Button>
+            <button
+              onClick={markAllRead}
+              className="px-3 py-1.5 rounded-full text-sm font-medium"
+              style={{ background: "rgba(10,132,255,0.15)", color: "#0A84FF" }}
+            >
+              <Check className="w-3.5 h-3.5 inline mr-1" /> Mark all read
+            </button>
           )}
         </motion.div>
 
         {loading ? (
-          <div className="bx-glass rounded-xl p-12 text-center text-muted-foreground">
-            <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading notifications...
+          <div className="rounded-2xl p-12 text-center" style={{ background: "#1C1C1E", border: "1px solid #38383A", color: "#8E8E93" }}>
+            <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading...
           </div>
         ) : notifications.length === 0 ? (
-          <div className="bx-glass rounded-xl p-12 text-center">
-            <Bell className="w-10 h-10 mx-auto mb-4 text-muted-foreground/40" />
+          <div className="rounded-2xl p-12 text-center" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <Bell className="w-10 h-10 mx-auto mb-4" style={{ color: "#48484A" }} />
             <h3 className="text-lg font-semibold text-white mb-2">No notifications</h3>
-            <p className="text-sm text-muted-foreground">You're all caught up!</p>
+            <p className="text-sm" style={{ color: "#8E8E93" }}>You're all caught up!</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {notifications.map((n, idx) => (
-              <motion.div
-                key={n.id}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className={`bx-glass rounded-xl p-4 flex items-start gap-3 ${!n.read ? "border-l-2 border-[#0ea5ff]" : ""}`}
-              >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                  n.type === "success" ? "bg-[#00c853]/15 text-[#00c853]" :
-                  n.type === "warning" ? "bg-[#f5a623]/15 text-[#f5a623]" :
-                  n.type === "error" ? "bg-[#ff3b30]/15 text-[#ff3b30]" :
-                  "bg-[#0ea5ff]/15 text-[#0ea5ff]"
-                }`}>
-                  <Bell className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-white text-sm">{n.title}</h3>
-                    {!n.read && <span className="w-2 h-2 rounded-full bg-[#0ea5ff]" />}
+            {notifications.map((n, idx) => {
+              const color =
+                n.type === "success" ? "#30D158" :
+                n.type === "warning" ? "#FF9F0A" :
+                n.type === "error" ? "#FF453A" :
+                "#0A84FF";
+              return (
+                <motion.div
+                  key={n.id}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="rounded-2xl p-4 flex items-start gap-3"
+                  style={{
+                    background: "#1C1C1E",
+                    border: `1px solid ${n.read ? "#38383A" : color}`,
+                    borderLeft: !n.read ? `3px solid ${color}` : "1px solid #38383A",
+                  }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: `${color}22` }}
+                  >
+                    <Bell className="w-4 h-4" style={{ color }} />
                   </div>
-                  <p className="text-sm text-muted-foreground mt-0.5">{n.body}</p>
-                  <div className="text-xs text-muted-foreground/60 mt-1">
-                    {new Date(n.createdAt).toLocaleString()}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-white text-sm">{n.title}</h3>
+                      {!n.read && <span className="w-2 h-2 rounded-full" style={{ background: color }} />}
+                    </div>
+                    <p className="text-sm mt-0.5" style={{ color: "#8E8E93" }}>{n.body}</p>
+                    <div className="text-xs mt-1" style={{ color: "#48484A" }}>
+                      {new Date(n.createdAt).toLocaleString()}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </div>

@@ -50,19 +50,20 @@ function useLivePrices() {
   return prices;
 }
 
+// iPhone-style theme tokens — matches Profile/Settings views
 const T = {
-  bg: "#121212",
-  card: "#1E1E1E",
-  border: "#2A2A2A",
-  accent: "#7b1fa2", // purple accent per design
-  accentLight: "#9c27b0",
-  gradientFrom: "#1a237e", // navy
-  gradientTo: "#4a148c",   // deep purple
-  positive: "#00e676",
-  negative: "#ff5252",
+  bg: "#000000",              // pure black
+  card: "#1C1C1E",            // iOS system gray 6
+  border: "#38383A",          // iOS separator
+  accent: "#0A84FF",          // iOS system blue
+  accentLight: "#0A84FF",
+  gradientFrom: "#0A84FF",    // iOS blue gradient
+  gradientTo: "#0D47A1",      // deep blue
+  positive: "#30D158",        // iOS system green
+  negative: "#FF453A",        // iOS system red
   text: "#FFFFFF",
-  textSec: "#B0B0B0",
-  textDim: "#707070",
+  textSec: "#8E8E93",         // iOS tertiary label
+  textDim: "#48484A",
 };
 
 export function WalletView() {
@@ -176,7 +177,7 @@ export function WalletView() {
             <ActionButton icon={Plus} label="Add" color={T.positive} onClick={() => setModal("deposit")} disabled={overview?.walletLocked} />
             <ActionButton icon={ArrowUpFromLine} label="Trade" color={T.accentLight} onClick={() => navigate("trade")} />
             <ActionButton icon={WalletIcon} label="Wallet" color="#2196f3" onClick={() => document.getElementById("history")?.scrollIntoView({ behavior: "smooth" })} />
-            <ActionButton icon={CreditCard} label="Deposit" color="#f5a623" onClick={() => navigate("deposit")} />
+            <ActionButton icon={CreditCard} label="Deposit" color="#FF9F0A" onClick={() => navigate("deposit")} />
             <ActionButton icon={SettingsIcon} label="Settings" color={T.textSec} onClick={() => navigate("settings")} />
           </motion.div>
 
