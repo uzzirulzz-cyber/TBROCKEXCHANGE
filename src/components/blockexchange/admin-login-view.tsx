@@ -22,21 +22,8 @@ export function AdminLoginView() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Hard-embedded staff credentials for quick login.
-  const STAFF_ACCOUNTS = [
-    { label: "Super Admin", email: "crdbixx@gmail.com", password: "123playbeat", role: "SUPER_ADMIN" },
-    { label: "Sub-Agent 1", email: "subagent1@trade.com", password: "default", role: "SUB_AGENT", code: "PB-AG001" },
-    { label: "Sub-Agent 2", email: "subagent2@trade2.com", password: "default", role: "SUB_AGENT", code: "PB-AG002" },
-    { label: "Sub-Agent 3", email: "subagent3@trade3.com", password: "default", role: "SUB_AGENT", code: "PB-AG003" },
-    { label: "Sub-Agent 4", email: "subagent4@trade4.com", password: "default", role: "SUB_AGENT", code: "PB-AG004" },
-    { label: "Sub-Agent 5", email: "subagent5@trade5.com", password: "default", role: "SUB_AGENT", code: "PB-AG005" },
-  ];
-
   async function doLogin(loginEmail: string, loginPassword: string) {
     setLoading(true);
-    try {
-      await fetch("/api/auth/seed", { method: "POST" });
-    } catch {}
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -70,12 +57,6 @@ export function AdminLoginView() {
       return;
     }
     await doLogin(email, password);
-  }
-
-  function quickLogin(acc: typeof STAFF_ACCOUNTS[0]) {
-    setEmail(acc.email);
-    setPassword(acc.password);
-    doLogin(acc.email, acc.password);
   }
 
   return (
@@ -171,29 +152,14 @@ export function AdminLoginView() {
             </form>
 
             <div className="mt-6 pt-5 border-t border-white/5">
-              <p className="text-[11px] text-muted-foreground text-center mb-3">Quick Staff Login</p>
-              <div className="grid grid-cols-2 gap-2">
-                {STAFF_ACCOUNTS.map((acc) => (
-                  <button
-                    key={acc.email}
-                    onClick={() => quickLogin(acc)}
-                    disabled={loading}
-                    className="px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-40"
-                    style={{
-                      background: acc.role === "SUPER_ADMIN" ? "linear-gradient(135deg, #2196f3, #0d47a1)" : "rgba(255,255,255,0.05)",
-                      border: acc.role === "SUPER_ADMIN" ? "none" : "1px solid rgba(125,168,230,0.15)",
-                      color: "#fff",
-                    }}
-                  >
-                    {acc.role === "SUPER_ADMIN" ? "👑 " : ""}{acc.label}
-                    {acc.code && <span className="block text-[9px] opacity-60">{acc.code}</span>}
-                  </button>
-                ))}
-              </div>
+              <p className="text-[11px] text-muted-foreground text-center">
+                Staff credentials are set by your platform operator via environment variables.
+                Contact your administrator if you need access.
+              </p>
             </div>
           </div>
           <p className="mt-4 text-center text-[11px] text-muted-foreground">
-            support@blockexchange.buzz · Trade • Invest • Grow
+            support@brockexchange.buzz · Trade • Invest • Grow
           </p>
         </motion.div>
       </main>

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { verifyPassword, toSafeUser, logLogin, logAction } from "@/lib/api-auth";
+import {
+  verifyPassword, toSafeUser, logLogin, logAction,
+  isLegacyHash, upgradeLegacyHash,
+} from "@/lib/api-auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,6 +35,12 @@ export async function POST(req: NextRequest) {
     if (!ok) {
       await logLogin({ userId: user.id, email: emailStr, req, success: false, reason: "BAD_PASSWORD" });
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+    }
+
+    // Auto-upgrade legacy SHA-256 hashes to bcrypt on successful login.
+    // Fire-and-forget — must not block the login response.
+    if (isLegacyHash(user.passwordHash)) {
+      void upgradeLegacyHash(user.id, String(password));
     }
 
     await logLogin({ userId: user.id, email: emailStr, req, success: true });

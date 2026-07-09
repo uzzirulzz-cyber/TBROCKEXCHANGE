@@ -9,6 +9,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { createHash } from "node:crypto";
 import { db } from "@/lib/db";
 
 export type Role = "CUSTOMER" | "SUB_AGENT" | "SUPER_ADMIN";
@@ -71,9 +72,49 @@ export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
 }
 
-/** bcrypt verify. */
+/**
+ * Verify a password against a stored hash.
+ *
+ * Supports two hash formats:
+ *  - bcrypt ($2a$ / $2b$ / $2y$ prefix) — current standard
+ *  - SHA-256 hex (64-char lowercase hex) — legacy, from an older version of the codebase
+ *
+ * If a SHA-256 hash verifies successfully, the caller should re-hash with bcrypt
+ * and persist the upgrade. Use `upgradeLegacyHash()` below.
+ */
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+  // bcrypt hashes start with $2 and are ~60 chars
+  if (hash.startsWith("$2")) {
+    return bcrypt.compare(password, hash);
+  }
+  // Legacy SHA-256 hex (64 chars, lowercase)
+  if (/^[a-f0-9]{64}$/i.test(hash)) {
+    const sha256 = createHash("sha256").update(password).digest("hex");
+    return sha256.toLowerCase() === hash.toLowerCase();
+  }
+  return false;
+}
+
+/** True if a stored hash is the legacy SHA-256 format (needs upgrade to bcrypt). */
+export function isLegacyHash(hash: string): boolean {
+  return !hash.startsWith("$2");
+}
+
+/** Re-hash a password with bcrypt. Called after a successful legacy-hash login. */
+export async function upgradeLegacyHash(
+  userId: string,
+  password: string
+): Promise<void> {
+  try {
+    const newHash = await hashPassword(password);
+    await db.user.update({
+      where: { id: userId },
+      data: { passwordHash: newHash },
+    });
+  } catch (err) {
+    // upgrade failure must not break login — the old hash still works next time
+    console.error("[upgradeLegacyHash] failed for user", userId, err);
+  }
 }
 
 /**
