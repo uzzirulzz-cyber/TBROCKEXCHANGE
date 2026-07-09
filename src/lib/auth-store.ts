@@ -41,6 +41,8 @@ export interface AuthUser {
   kycStatus?: string;
   status?: string;
   lastLoginAt?: string | null;
+  photoUrl?: string;
+  twoFactorEnabled?: boolean;
 }
 
 interface AuthState {

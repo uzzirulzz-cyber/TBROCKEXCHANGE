@@ -19,7 +19,7 @@
  *  - SettingsView     : user settings
  */
 
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth-store";
 import { COINS, formatPrice, type Coin } from "@/lib/market-data";
@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Toaster as SonnerToaster, toast } from "sonner";
@@ -34,7 +35,8 @@ import {
   Search, Star, TrendingUp, TrendingDown, ArrowDownToLine, ArrowUpFromLine,
   Wallet as WalletIcon, History as HistoryIcon, User as UserIcon, Bell,
   Settings as SettingsIcon, Loader2, Copy, Check, Snowflake, Shield, Mail,
-  Phone, Globe, Lock, Eye, EyeOff, Save, LogOut, Filter,
+  Phone, Globe, Lock, Eye, EyeOff, Save, LogOut, Filter, Camera,
+  KeyRound, AlertCircle,
 } from "lucide-react";
 import { ALL_PAYMENT_METHODS } from "@/lib/fiat-countries";
 
@@ -926,11 +928,77 @@ export function HistoryView() {
 /* =============================== PROFILE ================================= */
 
 export function ProfileView() {
-  const { user, navigate, logout } = useAuth();
+  const { user, navigate, logout, setUser } = useAuth();
   const [showUid, setShowUid] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) {
     return <main className="flex-1 pt-20 flex items-center justify-center"><Button onClick={() => navigate("login")}>Please login</Button></main>;
+  }
+
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image too large. Max 2MB.");
+      return;
+    }
+    setUploading(true);
+    try {
+      // Convert to base64 data URL
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const photo = reader.result as string;
+        try {
+          const res = await fetch("/api/auth/photo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-user-id": user!.id },
+            body: JSON.stringify({ photo }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            toast.error(data.error || "Upload failed");
+            return;
+          }
+          setUser(data.user);
+          toast.success("Profile photo updated");
+        } catch {
+          toast.error("Network error");
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      toast.error("Failed to read file");
+      setUploading(false);
+    }
+  }
+
+  async function handlePhotoRemove() {
+    setUploading(true);
+    try {
+      const res = await fetch("/api/auth/photo", {
+        method: "DELETE",
+        headers: { "x-user-id": user!.id },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to remove photo");
+        return;
+      }
+      setUser(data.user);
+      toast.success("Photo removed");
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setUploading(false);
+    }
   }
 
   const fields = [
@@ -951,21 +1019,59 @@ export function ProfileView() {
           <p className="text-sm text-muted-foreground mt-1">Your account information</p>
         </motion.div>
 
-        {/* Profile card */}
+        {/* Profile card with photo */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-2xl p-6 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bx-blue-gradient flex items-center justify-center text-3xl font-bold text-white">
-              {user.name.charAt(0).toUpperCase()}
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {/* Photo */}
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-full overflow-hidden bx-blue-gradient flex items-center justify-center text-3xl font-bold text-white ring-2 ring-white/10">
+                {user.photoUrl ? (
+                  <img src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
+                ) : (
+                  user.name.charAt(0).toUpperCase()
+                )}
+              </div>
+              {/* Upload button overlay */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                aria-label="Upload photo"
+              >
+                {uploading ? (
+                  <Loader2 className="w-6 h-6 text-white animate-spin" />
+                ) : (
+                  <Camera className="w-6 h-6 text-white" />
+                )}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 text-center sm:text-left">
               <h2 className="text-xl font-bold text-white">{user.name}</h2>
               <div className="text-sm text-muted-foreground">{user.email}</div>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
                 <Badge className="bg-[#0ea5ff]/15 text-[#0ea5ff]">
                   {user.role === "SUPER_ADMIN" ? "Super Admin" : user.role === "SUB_AGENT" ? "Agent" : "Customer"}
                 </Badge>
                 {user.role === "CUSTOMER" && (
                   <Badge variant="outline" className="border-white/10 text-muted-foreground">VIP {user.vipLevel}</Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-3 justify-center sm:justify-start">
+                <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                  <Camera className="w-3.5 h-3.5 mr-1.5" />
+                  {user.photoUrl ? "Change Photo" : "Upload Photo"}
+                </Button>
+                {user.photoUrl && (
+                  <Button size="sm" variant="ghost" onClick={handlePhotoRemove} disabled={uploading} className="text-[#ff3b30]">
+                    Remove
+                  </Button>
                 )}
               </div>
             </div>
@@ -1119,12 +1225,18 @@ export function NotificationsView() {
 /* =============================== SETTINGS ================================ */
 
 export function SettingsView() {
-  const { user, navigate, logout } = useAuth();
+  const { user, navigate, logout, setUser } = useAuth();
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [country, setCountry] = useState(user?.country || "");
   const [saving, setSaving] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
+  const [currentPwd, setCurrentPwd] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+  const [confirmPwd, setConfirmPwd] = useState("");
+  const [changingPwd, setChangingPwd] = useState(false);
+  const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
 
   if (!user) {
     return <main className="flex-1 pt-20 flex items-center justify-center"><Button onClick={() => navigate("login")}>Please login</Button></main>;
@@ -1133,13 +1245,98 @@ export function SettingsView() {
   async function handleSave() {
     setSaving(true);
     try {
-      // Note: profile update endpoint would go here if it exists
-      await new Promise((r) => setTimeout(r, 600));
-      toast.success("Settings saved");
+      const res = await fetch("/api/auth/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-user-id": user!.id },
+        body: JSON.stringify({ name, phone, country }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to save");
+        return;
+      }
+      setUser(data.user);
+      toast.success("Profile updated successfully");
     } catch {
-      toast.error("Failed to save settings");
+      toast.error("Network error");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handlePasswordChange() {
+    if (!currentPwd || !newPwd || !confirmPwd) {
+      toast.error("Fill in all password fields");
+      return;
+    }
+    if (newPwd.length < 6) {
+      toast.error("New password must be at least 6 characters");
+      return;
+    }
+    if (newPwd !== confirmPwd) {
+      toast.error("New passwords don't match");
+      return;
+    }
+    setChangingPwd(true);
+    try {
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-user-id": user!.id },
+        body: JSON.stringify({ currentPassword: currentPwd, newPassword: newPwd }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to change password");
+        return;
+      }
+      setUser(data.user);
+      toast.success("Password changed successfully");
+      setCurrentPwd("");
+      setNewPwd("");
+      setConfirmPwd("");
+      setShowPwd(false);
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setChangingPwd(false);
+    }
+  }
+
+  async function handle2FAToggle() {
+    setTwoFactorLoading(true);
+    try {
+      if (user?.twoFactorEnabled) {
+        // Disable
+        const res = await fetch("/api/auth/2fa", {
+          method: "DELETE",
+          headers: { "x-user-id": user!.id },
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast.error(data.error || "Failed to disable 2FA");
+          return;
+        }
+        setUser(data.user);
+        toast.success("2FA disabled");
+      } else {
+        // Enable
+        const res = await fetch("/api/auth/2fa", {
+          method: "POST",
+          headers: { "x-user-id": user!.id },
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast.error(data.error || "Failed to enable 2FA");
+          return;
+        }
+        setUser(data.user);
+        setRecoveryCodes(data.recoveryCodes);
+        toast.success("2FA enabled — save your recovery codes");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setTwoFactorLoading(false);
     }
   }
 
@@ -1155,6 +1352,7 @@ export function SettingsView() {
           <p className="text-sm text-muted-foreground mt-1">Manage your account preferences</p>
         </motion.div>
 
+        {/* Profile Information */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bx-glass rounded-2xl p-6 mb-6 space-y-5">
           <h3 className="font-semibold text-white">Profile Information</h3>
 
@@ -1185,40 +1383,98 @@ export function SettingsView() {
           </Button>
         </motion.div>
 
+        {/* Security */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bx-glass rounded-2xl p-6 mb-6 space-y-4">
           <h3 className="font-semibold text-white">Security</h3>
+
+          {/* Password change */}
           <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]">
             <div className="flex items-center gap-3">
               <Lock className="w-4 h-4 text-muted-foreground" />
               <div>
                 <div className="text-sm text-white">Password</div>
-                <div className="text-xs text-muted-foreground">Last changed: never</div>
+                <div className="text-xs text-muted-foreground">Change your password</div>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => setShowPwd((v) => !v)}>
-              {showPwd ? "Hide" : "Change"}
+              {showPwd ? "Cancel" : "Change"}
             </Button>
           </div>
           {showPwd && (
-            <div className="space-y-3 p-3 rounded-lg bg-white/[0.02]">
-              <Input type="password" placeholder="Current password" className="bg-white/5 border-white/10" />
-              <Input type="password" placeholder="New password" className="bg-white/5 border-white/10" />
-              <Input type="password" placeholder="Confirm new password" className="bg-white/5 border-white/10" />
-              <Button size="sm">Update Password</Button>
+            <div className="space-y-3 p-4 rounded-lg bg-white/[0.02]">
+              <div>
+                <Label className="text-xs text-muted-foreground">Current Password</Label>
+                <Input type="password" value={currentPwd} onChange={(e) => setCurrentPwd(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">New Password</Label>
+                <Input type="password" value={newPwd} onChange={(e) => setNewPwd(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Confirm New Password</Label>
+                <Input type="password" value={confirmPwd} onChange={(e) => setConfirmPwd(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+              </div>
+              <Button size="sm" onClick={handlePasswordChange} disabled={changingPwd} className="bg-gradient-to-r from-[#2196F3] to-[#0D47A1] text-white">
+                {changingPwd ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <KeyRound className="w-3.5 h-3.5 mr-1.5" />}
+                Update Password
+              </Button>
             </div>
           )}
+
+          {/* 2FA */}
           <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]">
             <div className="flex items-center gap-3">
               <Shield className="w-4 h-4 text-muted-foreground" />
               <div>
                 <div className="text-sm text-white">Two-Factor Authentication</div>
-                <div className="text-xs text-muted-foreground">Not enabled</div>
+                <div className="text-xs text-muted-foreground">
+                  {user.twoFactorEnabled ? "Enabled — recovery codes generated" : "Add an extra layer of security"}
+                </div>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={() => toast.info("2FA setup coming soon")}>Enable</Button>
+            <div className="flex items-center gap-2">
+              {twoFactorLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+              <Switch
+                checked={user.twoFactorEnabled ?? false}
+                onCheckedChange={handle2FAToggle}
+                disabled={twoFactorLoading}
+              />
+            </div>
           </div>
+
+          {/* Recovery codes (shown after enabling) */}
+          {recoveryCodes && recoveryCodes.length > 0 && (
+            <div className="p-4 rounded-lg bg-[#f5a623]/10 border border-[#f5a623]/30">
+              <div className="flex items-start gap-2 mb-3">
+                <AlertCircle className="w-4 h-4 text-[#f5a623] shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-sm font-semibold text-[#f5a623]">Save your recovery codes</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Store these safely. You'll need them if you lose access to your device.
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+                {recoveryCodes.map((code, i) => (
+                  <div key={i} className="px-2 py-1.5 rounded bg-white/5 text-white">{code}</div>
+                ))}
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-3"
+                onClick={() => {
+                  navigator.clipboard?.writeText(recoveryCodes.join("\n"));
+                  toast.success("Recovery codes copied to clipboard");
+                }}
+              >
+                <Copy className="w-3.5 h-3.5 mr-1.5" /> Copy All
+              </Button>
+            </div>
+          )}
         </motion.div>
 
+        {/* Session */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bx-glass rounded-2xl p-6">
           <h3 className="font-semibold text-white mb-4">Session</h3>
           <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02]">
@@ -1229,7 +1485,7 @@ export function SettingsView() {
             <CopyButton text={user.uid} />
           </div>
           <Button variant="ghost" className="w-full mt-4 text-[#ff3b30] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10" onClick={logout}>
-            <LogOut className="w-4 h-4 mr-2" /> Logout from all devices
+            <LogOut className="w-4 h-4 mr-2" /> Logout
           </Button>
         </motion.div>
       </div>

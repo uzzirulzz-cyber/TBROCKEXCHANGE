@@ -176,8 +176,8 @@ export function WalletView() {
             <ActionButton icon={Plus} label="Add" color={T.positive} onClick={() => setModal("deposit")} disabled={overview?.walletLocked} />
             <ActionButton icon={ArrowUpFromLine} label="Trade" color={T.accentLight} onClick={() => navigate("trade")} />
             <ActionButton icon={WalletIcon} label="Wallet" color="#2196f3" onClick={() => document.getElementById("history")?.scrollIntoView({ behavior: "smooth" })} />
-            <ActionButton icon={CreditCard} label="Cards" color="#f5a623" onClick={() => toast.info("Cards coming soon")} />
-            <ActionButton icon={SettingsIcon} label="Settings" color={T.textSec} onClick={() => toast.info("Settings coming soon")} />
+            <ActionButton icon={CreditCard} label="Deposit" color="#f5a623" onClick={() => navigate("deposit")} />
+            <ActionButton icon={SettingsIcon} label="Settings" color={T.textSec} onClick={() => navigate("settings")} />
           </motion.div>
 
           {/* ===== ASSETS SUMMARY (Frozen / Available / In Trading) ===== */}

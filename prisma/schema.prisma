@@ -30,6 +30,12 @@ model User {
   kycStatus     String   @default("PENDING")
   lastLoginAt   DateTime?
   status        String   @default("ACTIVE")
+  // Profile photo (stored as base64 data URL — no external storage needed)
+  photoUrl      String?  @default("")
+  // Two-factor auth (TOTP-style flag + recovery codes)
+  twoFactorEnabled  Boolean @default(false)
+  twoFactorSecret   String? @default("")
+  twoFactorRecovery String? @default("")
   // Invitation-code system (Sub-Agents own a unique code; customers register with one)
   invitationCode     String?  @unique // set ONLY for SUB_AGENT accounts
   linkedSubAgentId   String?  // set on CUSTOMER: the Sub-Agent who owns them

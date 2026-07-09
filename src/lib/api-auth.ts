@@ -27,6 +27,8 @@ export interface SafeUser {
   mustChangePassword: boolean;
   invitationCode?: string | null;
   linkedSubAgentId?: string | null;
+  photoUrl?: string;
+  twoFactorEnabled?: boolean;
 }
 
 /** Strip a Prisma User row down to the fields safe to return to the client. */
@@ -43,6 +45,8 @@ export function toSafeUser(u: {
   mustChangePassword: boolean;
   invitationCode?: string | null;
   linkedSubAgentId?: string | null;
+  photoUrl?: string | null;
+  twoFactorEnabled?: boolean;
 }): SafeUser {
   return {
     id: u.id,
@@ -57,6 +61,8 @@ export function toSafeUser(u: {
     mustChangePassword: u.mustChangePassword,
     invitationCode: u.invitationCode ?? null,
     linkedSubAgentId: u.linkedSubAgentId ?? null,
+    photoUrl: u.photoUrl ?? "",
+    twoFactorEnabled: u.twoFactorEnabled ?? false,
   };
 }
 
