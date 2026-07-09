@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { seedDefaultAccounts } from "@/lib/seed";
 
-/** POST /api/auth/seed — idempotent. Returns seeded account metadata (never passwords). */
+/** POST /api/auth/seed — idempotent. Creates the 1 Super Admin + 5 Sub-Agents. */
 export async function POST() {
   try {
     const result = await seedDefaultAccounts();
@@ -14,11 +14,7 @@ export async function POST() {
       invitationCodes: result.invitationCodes,
       message: `Seeded ${result.created} accounts, ${result.skipped} already existed.`,
     });
-  } catch (err: any) {
-    // Surface config errors clearly so the operator knows which env var is missing
-    if (err?.message?.includes("is required")) {
-      return NextResponse.json({ error: err.message }, { status: 500 });
-    }
+  } catch (err) {
     console.error("[auth/seed] error", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -36,10 +32,7 @@ export async function GET() {
       subAgentEmails: result.subAgentEmails,
       invitationCodes: result.invitationCodes,
     });
-  } catch (err: any) {
-    if (err?.message?.includes("is required")) {
-      return NextResponse.json({ error: err.message }, { status: 500 });
-    }
+  } catch (err) {
     console.error("[auth/seed] error", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
