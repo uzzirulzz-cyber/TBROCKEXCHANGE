@@ -37,7 +37,7 @@ import {
   Wallet as WalletIcon, History as HistoryIcon, User as UserIcon, Bell,
   Settings as SettingsIcon, Loader2, Copy, Check, Snowflake, Shield, Mail,
   Phone, Globe, Lock, Eye, EyeOff, Save, LogOut, Filter, Camera,
-  KeyRound, AlertCircle,
+  KeyRound, AlertCircle, ArrowLeftRight,
 } from "lucide-react";
 import { ALL_PAYMENT_METHODS } from "@/lib/fiat-countries";
 
@@ -782,6 +782,8 @@ export function HistoryView() {
   const [trades, setTrades] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [txFilter, setTxFilter] = useState<"ALL" | "DEPOSIT" | "WITHDRAWAL" | "TRANSFER" | "TRADE" | "ADMIN">("ALL");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -791,17 +793,73 @@ export function HistoryView() {
     ])
       .then(([t, tx]) => {
         setTrades(t.trades || []);
-        setTransactions([
-          ...(tx.deposits || []).map((d: any) => ({ ...d, kind: "Deposit" })),
-          ...(tx.withdrawals || []).map((w: any) => ({ ...w, kind: "Withdrawal" })),
-        ]);
+        // Merge all transaction types into a unified list with consistent shape
+        const all: any[] = [
+          ...(tx.deposits || []).map((d: any) => ({
+            id: d.id, kind: "Deposit", type: "DEPOSIT",
+            amount: Number(d.amount), method: d.method || "—",
+            status: d.status, reference: d.reference || "",
+            createdAt: d.createdAt,
+          })),
+          ...(tx.withdrawals || []).map((w: any) => ({
+            id: w.id, kind: "Withdrawal", type: "WITHDRAWAL",
+            amount: -Number(w.amount), method: w.method || "—",
+            status: w.status, reference: w.address || w.reference || "",
+            createdAt: w.createdAt,
+          })),
+          ...(tx.transfersOut || []).map((tr: any) => ({
+            id: tr.id, kind: "Transfer Out", type: "TRANSFER",
+            amount: -Number(tr.amount), method: "Transfer",
+            status: tr.status || "COMPLETED", reference: `To: ${tr.recipient?.email || "—"}`,
+            createdAt: tr.createdAt,
+          })),
+          ...(tx.transfersIn || []).map((tr: any) => ({
+            id: tr.id, kind: "Transfer In", type: "TRANSFER",
+            amount: Number(tr.amount), method: "Transfer",
+            status: tr.status || "COMPLETED", reference: `From: ${tr.sender?.email || "—"}`,
+            createdAt: tr.createdAt,
+          })),
+          // Wallet logs = admin actions (CREDIT, DEBIT, FREEZE, UNFREEZE, BONUS, DEPOSIT, etc.)
+          ...(tx.walletLogs || []).map((l: any) => ({
+            id: l.id, kind: l.type || "Admin", type: "ADMIN",
+            amount: Number(l.amount), method: l.type || "Admin",
+            status: "COMPLETED", reference: l.reference || "",
+            createdAt: l.createdAt,
+          })),
+        ];
+        // Sort newest first
+        all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setTransactions(all);
       })
       .finally(() => setLoading(false));
   }, [user]);
 
   if (!user) {
-    return <main className="flex-1 pt-20 flex items-center justify-center"><Button onClick={() => navigate("login")}>Please login</Button></main>;
+    return <main className="flex-1 pt-20 flex items-center justify-center bg-black"><Button onClick={() => navigate("login")}>Please login</Button></main>;
   }
+
+  // Filter + search
+  const filteredTx = transactions.filter((t) => {
+    if (txFilter !== "ALL" && t.type !== txFilter) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return (
+        t.kind?.toLowerCase().includes(q) ||
+        t.method?.toLowerCase().includes(q) ||
+        t.reference?.toLowerCase().includes(q) ||
+        t.status?.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  const txStats = {
+    total: transactions.length,
+    deposits: transactions.filter((t) => t.type === "DEPOSIT").length,
+    withdrawals: transactions.filter((t) => t.type === "WITHDRAWAL").length,
+    transfers: transactions.filter((t) => t.type === "TRANSFER").length,
+    admin: transactions.filter((t) => t.type === "ADMIN").length,
+  };
 
   return (
     <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
@@ -823,102 +881,165 @@ export function HistoryView() {
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
           </TabsList>
 
+          {/* === TRADING HISTORY === */}
           <TabsContent value="trades">
-            <div className="bx-glass rounded-2xl overflow-hidden">
+            <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
               {loading ? (
-                <div className="p-12 text-center text-muted-foreground"><Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading...</div>
+                <div className="p-12 text-center" style={{ color: "#8E8E93" }}><Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading...</div>
               ) : trades.length === 0 ? (
-                <div className="p-12 text-center text-muted-foreground">No trades yet. <button className="text-[#0A84FF]" onClick={() => navigate("trade")}>Start trading</button></div>
+                <div className="p-12 text-center" style={{ color: "#8E8E93" }}>
+                  No trades yet. <button style={{ color: "#0A84FF" }} onClick={() => navigate("trade")}>Start trading</button>
+                </div>
               ) : (
-                <table className="w-full text-sm">
-                  <thead className="bg-white/[0.02] border-b border-white/5">
-                    <tr className="text-left text-muted-foreground text-xs uppercase tracking-wider">
-                      <th className="px-4 py-3">Symbol</th>
-                      <th className="px-4 py-3">Direction</th>
-                      <th className="px-4 py-3">Duration</th>
-                      <th className="px-4 py-3 text-right">Amount</th>
-                      <th className="px-4 py-3 text-right">Profit</th>
-                      <th className="px-4 py-3">Result</th>
-                      <th className="px-4 py-3">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {trades.map((t) => (
-                      <tr key={t.id} className="border-b border-white/5 hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-white font-medium">{t.symbol}</td>
-                        <td className="px-4 py-3">
-                          <Badge className={t.direction === "UP" ? "bg-[#30D158]/15 text-[#30D158]" : "bg-[#FF453A]/15 text-[#FF453A]"}>
+                <div className="divide-y" style={{ borderColor: "#38383A" }}>
+                  {trades.map((t) => (
+                    <div key={t.id} className="px-4 py-3.5 flex items-center gap-3" style={{ borderBottom: "1px solid #38383A" }}>
+                      {/* Coin icon */}
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style={{ background: t.direction === "UP" ? "rgba(48,209,88,0.15)" : "rgba(255,69,58,0.15)" }}>
+                        {t.direction === "UP" ? <TrendingUp className="w-5 h-5" style={{ color: "#30D158" }} /> : <TrendingDown className="w-5 h-5" style={{ color: "#FF453A" }} />}
+                      </div>
+                      {/* Main info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white font-medium text-sm">{t.symbol}</span>
+                          <span className="text-xs px-1.5 py-0.5 rounded" style={{
+                            background: t.direction === "UP" ? "rgba(48,209,88,0.15)" : "rgba(255,69,58,0.15)",
+                            color: t.direction === "UP" ? "#30D158" : "#FF453A",
+                          }}>
                             {t.direction}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">{t.duration}s</td>
-                        <td className="px-4 py-3 text-right text-white tabular-nums">{Number(t.amount).toFixed(2)}</td>
-                        <td className={`px-4 py-3 text-right tabular-nums font-medium ${Number(t.profit) >= 0 ? "text-[#30D158]" : "text-[#FF453A]"}`}>
-                          {Number(t.profit) >= 0 ? "+" : ""}{Number(t.profit).toFixed(2)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant="outline" className={
-                            t.result === "WIN" ? "border-[#30D158]/30 text-[#30D158]" :
-                            t.result === "LOSE" ? "border-[#FF453A]/30 text-[#FF453A]" :
-                            "border-white/10 text-muted-foreground"
-                          }>
-                            {t.result}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-muted-foreground">
+                          </span>
+                          <span className="text-xs" style={{ color: "#8E8E93" }}>{t.duration}s</span>
+                        </div>
+                        <div className="text-xs mt-0.5" style={{ color: "#8E8E93" }}>
                           {new Date(t.createdAt).toLocaleString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                      {/* Amount + profit */}
+                      <div className="text-right shrink-0">
+                        <div className="text-sm text-white tabular-nums">{Number(t.amount).toFixed(2)}</div>
+                        <div className="text-xs tabular-nums font-medium" style={{
+                          color: t.result === "WIN" ? "#30D158" : t.result === "LOSE" ? "#FF453A" : "#8E8E93",
+                        }}>
+                          {t.result === "WIN" ? "+" : t.result === "LOSE" ? "" : ""}{Number(t.profit).toFixed(2)}
+                        </div>
+                      </div>
+                      {/* Result badge */}
+                      <Badge variant="outline" className="shrink-0" style={{
+                        borderColor: t.result === "WIN" ? "rgba(48,209,88,0.3)" : t.result === "LOSE" ? "rgba(255,69,58,0.3)" : "rgba(142,142,147,0.3)",
+                        color: t.result === "WIN" ? "#30D158" : t.result === "LOSE" ? "#FF453A" : "#8E8E93",
+                      }}>
+                        {t.result}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </TabsContent>
 
+          {/* === TRANSACTIONS === */}
           <TabsContent value="transactions">
-            <div className="bx-glass rounded-2xl overflow-hidden">
+            {/* Stat chips */}
+            <div className="grid grid-cols-5 gap-2 mb-4">
+              {[
+                { label: "All", value: txStats.total, filter: "ALL" as const, color: "#0A84FF" },
+                { label: "Deposit", value: txStats.deposits, filter: "DEPOSIT" as const, color: "#30D158" },
+                { label: "Withdraw", value: txStats.withdrawals, filter: "WITHDRAWAL" as const, color: "#FF453A" },
+                { label: "Transfer", value: txStats.transfers, filter: "TRANSFER" as const, color: "#BF5AF2" },
+                { label: "Admin", value: txStats.admin, filter: "ADMIN" as const, color: "#FF9F0A" },
+              ].map((chip) => (
+                <button
+                  key={chip.filter}
+                  onClick={() => setTxFilter(chip.filter)}
+                  className="rounded-xl p-2 text-center transition-all"
+                  style={{
+                    background: txFilter === chip.filter ? `${chip.color}22` : "#1C1C1E",
+                    border: txFilter === chip.filter ? `1px solid ${chip.color}` : "1px solid #38383A",
+                  }}
+                >
+                  <div className="text-lg font-bold" style={{ color: chip.color }}>{chip.value}</div>
+                  <div className="text-[10px]" style={{ color: "#8E8E93" }}>{chip.label}</div>
+                </button>
+              ))}
+            </div>
+
+            {/* Search */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#8E8E93" }} />
+              <input
+                placeholder="Search by type, method, reference, status..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm text-white outline-none"
+                style={{ background: "#1C1C1E", border: "1px solid #38383A" }}
+              />
+            </div>
+
+            {/* List */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
               {loading ? (
-                <div className="p-12 text-center text-muted-foreground"><Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading...</div>
-              ) : transactions.length === 0 ? (
-                <div className="p-12 text-center text-muted-foreground">No transactions yet.</div>
+                <div className="p-12 text-center" style={{ color: "#8E8E93" }}><Loader2 className="w-5 h-5 animate-spin inline mr-2" /> Loading...</div>
+              ) : filteredTx.length === 0 ? (
+                <div className="p-12 text-center" style={{ color: "#8E8E93" }}>
+                  {search ? "No transactions match your search." : "No transactions yet."}
+                </div>
               ) : (
-                <table className="w-full text-sm">
-                  <thead className="bg-white/[0.02] border-b border-white/5">
-                    <tr className="text-left text-muted-foreground text-xs uppercase tracking-wider">
-                      <th className="px-4 py-3">Type</th>
-                      <th className="px-4 py-3 text-right">Amount</th>
-                      <th className="px-4 py-3">Method</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((t) => (
-                      <tr key={t.id} className="border-b border-white/5 hover:bg-white/[0.02]">
-                        <td className="px-4 py-3">
-                          <Badge variant="outline" className={t.kind === "Deposit" ? "border-[#30D158]/30 text-[#30D158]" : "border-[#FF453A]/30 text-[#FF453A]"}>
-                            {t.kind}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-right text-white tabular-nums">{Number(t.amount).toFixed(2)} USDT</td>
-                        <td className="px-4 py-3 text-muted-foreground">{t.method || "—"}</td>
-                        <td className="px-4 py-3">
-                          <Badge className={
-                            t.status === "APPROVED" ? "bg-[#30D158]/15 text-[#30D158]" :
-                            t.status === "PENDING" ? "bg-[#FF9F0A]/15 text-[#FF9F0A]" :
-                            "bg-[#FF453A]/15 text-[#FF453A]"
-                          }>
+                <div>
+                  {filteredTx.map((t, i, arr) => {
+                    const isLast = i === arr.length - 1;
+                    const isPositive = Number(t.amount) >= 0;
+                    const typeColor =
+                      t.type === "DEPOSIT" ? "#30D158" :
+                      t.type === "WITHDRAWAL" ? "#FF453A" :
+                      t.type === "TRANSFER" ? "#BF5AF2" :
+                      "#FF9F0A"; // ADMIN
+                    return (
+                      <div
+                        key={t.id}
+                        className="px-4 py-3.5 flex items-center gap-3"
+                        style={{ borderBottom: isLast ? "none" : "1px solid #38383A" }}
+                      >
+                        {/* Type icon */}
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: `${typeColor}22` }}>
+                          {t.type === "DEPOSIT" ? <ArrowDownToLine className="w-5 h-5" style={{ color: typeColor }} /> :
+                           t.type === "WITHDRAWAL" ? <ArrowUpFromLine className="w-5 h-5" style={{ color: typeColor }} /> :
+                           t.type === "TRANSFER" ? <ArrowLeftRight className="w-5 h-5" style={{ color: typeColor }} /> :
+                           <WalletIcon className="w-5 h-5" style={{ color: typeColor }} />}
+                        </div>
+                        {/* Main info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm text-white font-medium">{t.kind}</div>
+                          <div className="text-xs mt-0.5" style={{ color: "#8E8E93" }}>
+                            {t.method}{t.reference ? ` · ${t.reference}` : ""}
+                          </div>
+                          <div className="text-[10px] mt-0.5" style={{ color: "#48484A" }}>
+                            {new Date(t.createdAt).toLocaleString()}
+                          </div>
+                        </div>
+                        {/* Amount */}
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-semibold tabular-nums" style={{ color: isPositive ? "#30D158" : "#FF453A" }}>
+                            {isPositive ? "+" : ""}{Number(t.amount).toFixed(2)}
+                          </div>
+                          <div className="text-[10px] mt-0.5" style={{
+                            color: t.status === "APPROVED" || t.status === "COMPLETED" ? "#30D158" : t.status === "PENDING" ? "#FF9F0A" : "#FF453A",
+                          }}>
                             {t.status}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-muted-foreground">{new Date(t.createdAt).toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </div>
+
+            {/* Summary */}
+            {!loading && filteredTx.length > 0 && (
+              <div className="mt-4 px-4 py-3 rounded-2xl text-xs" style={{ background: "#1C1C1E", border: "1px solid #38383A", color: "#8E8E93" }}>
+                Showing {filteredTx.length} of {transactions.length} transactions
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
