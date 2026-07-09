@@ -67,7 +67,7 @@ const T = {
 };
 
 export function WalletView() {
-  const { user, navigate } = useAuth();
+  const { user, navigate, updateBalance } = useAuth();
   const [overview, setOverview] = useState<Overview | null>(null);
   const [logs, setLogs] = useState<any[]>([]);
   const [deposits, setDeposits] = useState<any[]>([]);
@@ -87,13 +87,32 @@ export function WalletView() {
       ]);
       const ov = await ovRes.json();
       const tx = await txRes.json();
-      if (ov.overview) setOverview(ov.overview);
+      if (ov.overview) {
+        setOverview(ov.overview);
+        // Sync the auth-store balance so navbar + other views stay fresh
+        if (typeof ov.overview.availableBalance === "number") {
+          updateBalance(ov.overview.availableBalance);
+        }
+      }
       setDeposits(tx.deposits || []); setWithdrawals(tx.withdrawals || []);
       setLogs(tx.walletLogs || []); setTrades(tx.trades || []);
     } finally { setLoading(false); }
-  }, [user]);
+  }, [user, updateBalance]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Refresh when window regains focus (user switches back from admin/another tab)
+  useEffect(() => {
+    const onFocus = () => load();
+    window.addEventListener("focus", onFocus);
+    // Also poll every 15s while the wallet is open, so admin-side balance
+    // changes show up without the user needing to refresh.
+    const interval = setInterval(load, 15000);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      clearInterval(interval);
+    };
+  }, [load]);
 
   if (!user) {
     return <main className="flex-1 pt-20 flex items-center justify-center"><Button onClick={() => navigate("login")}>Please login</Button></main>;
