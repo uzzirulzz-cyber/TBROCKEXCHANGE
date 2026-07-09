@@ -292,12 +292,13 @@ function MarketCard({ coin, live }: { coin: Coin; live: LivePrice }) {
   const gradId = `spark-${coin.symbol}`;
 
   return (
-    <motion.div
+    <motion.button
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.35 }}
-      className="bx-glass rounded-2xl p-5 hover:bx-glow hover:border-[#0ea5ff]/40 transition-all"
+      onClick={() => navigate("trade")}
+      className="bx-glass rounded-2xl p-5 hover:bx-glow hover:border-[#0ea5ff]/40 transition-all text-left w-full cursor-pointer active:scale-[0.98]"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
@@ -353,14 +354,10 @@ function MarketCard({ coin, live }: { coin: Coin; live: LivePrice }) {
         </ResponsiveContainer>
       </div>
 
-      <Button
-        onClick={() => navigate("trade")}
-        size="sm"
-        className="w-full mt-3 bg-gradient-to-r from-[#2196F3] to-[#0D47A1] hover:opacity-90 text-white"
-      >
+      <div className="w-full mt-3 py-2 rounded-lg bg-gradient-to-r from-[#2196F3] to-[#0D47A1] text-white text-xs font-semibold text-center">
         Trade
-      </Button>
-    </motion.div>
+      </div>
+    </motion.button>
   );
 }
 

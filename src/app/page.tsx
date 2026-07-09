@@ -14,6 +14,7 @@ import { AdminLoginView } from "@/components/blockexchange/admin-login-view";
 import { PasswordChangeModal } from "@/components/blockexchange/password-change-modal";
 import { SupportChatWidget } from "@/components/blockexchange/support-chat-widget";
 import { PWAInstallPrompt } from "@/components/blockexchange/pwa-install-prompt";
+import { MobileTabBar } from "@/components/blockexchange/mobile-tab-bar";
 import {
   MarketsView, WatchlistView, AssetsView, DepositView, WithdrawView,
   HistoryView, ProfileView, NotificationsView, SettingsView,
@@ -81,7 +82,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar minimal={isAuthView} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col pb-16 lg:pb-0">
         {view === "home" && <HomeView />}
         {view === "login" && <AuthView />}
         {view === "register" && <AuthView />}
@@ -101,6 +102,8 @@ export default function Home() {
       <SupportChatWidget />
       <PWAInstallPrompt />
       <PasswordChangeModal />
+      {/* Mobile bottom tab bar — hidden on auth views + desktop */}
+      {!isAuthView && <MobileTabBar />}
     </div>
   );
 }
