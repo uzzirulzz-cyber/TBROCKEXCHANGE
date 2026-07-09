@@ -6,8 +6,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  // Keep Prisma + bcryptjs as external packages in standalone mode.
+  // Without this, Next.js tries to bundle them and the Prisma engine
+  // binaries + bcrypt native bindings don't get included, causing
+  // "Internal server error" on every API route that touches the DB.
+  serverExternalPackages: ["@prisma/client", "bcryptjs", "mongodb"],
   // Map path-style URLs to the single / route with a ?view= param.
-  // The storefront lives at / (and /storefront, /home); the staff portal at /admin.
   async rewrites() {
     return [
       { source: "/storefront", destination: "/?view=home" },

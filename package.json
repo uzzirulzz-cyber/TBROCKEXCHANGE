@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "unset DATABASE_URL DIRECT_URL && next dev -p 3000 2>&1 | tee dev.log",
-    "build": "prisma generate && unset DATABASE_URL DIRECT_URL && next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
-    "start": "NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee server.log",
+    "build": "prisma generate && unset DATABASE_URL DIRECT_URL && next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/ && cp -r node_modules/.prisma .next/standalone/node_modules/ && cp -r node_modules/@prisma .next/standalone/node_modules/ && cp -r node_modules/bcryptjs .next/standalone/node_modules/ 2>/dev/null || true",
+    "start": "NODE_ENV=production node .next/standalone/server.js",
     "lint": "eslint .",
     "postinstall": "prisma generate",
     "db:push": "unset DATABASE_URL DIRECT_URL && prisma db push",
