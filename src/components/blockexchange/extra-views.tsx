@@ -23,6 +23,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth-store";
 import { COINS, formatPrice, type Coin } from "@/lib/market-data";
+import { getVipLabel, getVipColor } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -1062,8 +1063,14 @@ export function ProfileView() {
               {user.role === "SUPER_ADMIN" ? "Super Admin" : user.role === "SUB_AGENT" ? "Agent" : "Customer"}
             </span>
             {user.role === "CUSTOMER" && (
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#2C2C2E] text-[#8E8E93]">
-                VIP {user.vipLevel}
+              <span
+                className="px-2.5 py-1 rounded-full text-xs font-semibold"
+                style={{
+                  background: `${getVipColor(user.vipLevel)}22`,
+                  color: getVipColor(user.vipLevel),
+                }}
+              >
+                {getVipLabel(user.vipLevel)}
               </span>
             )}
           </div>

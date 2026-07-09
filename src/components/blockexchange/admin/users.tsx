@@ -45,6 +45,7 @@ import {
   RowSkeleton, SectionHeader, SectionShell, StatusBadge,
   type AdminUser, fmtDateShort, fmtMoney,
 } from "./shared";
+import { getVipLabel, getVipColor } from "@/lib/utils";
 
 interface UsersProps {
   userId: string;
@@ -270,6 +271,7 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
                 <TableHead className="text-muted-foreground text-xs uppercase tracking-wider px-4">User</TableHead>
                 <TableHead className="text-muted-foreground text-xs uppercase tracking-wider">UID</TableHead>
                 <TableHead className="text-muted-foreground text-xs uppercase tracking-wider">Role</TableHead>
+                <TableHead className="text-muted-foreground text-xs uppercase tracking-wider">VIP</TableHead>
                 <TableHead className="text-muted-foreground text-xs uppercase tracking-wider">Balance</TableHead>
                 <TableHead className="text-muted-foreground text-xs uppercase tracking-wider">Trades</TableHead>
                 <TableHead className="text-muted-foreground text-xs uppercase tracking-wider">Status</TableHead>
@@ -279,12 +281,12 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
             <TableBody>
               {loading && Array.from({ length: 6 }).map((_, i) => (
                 <TableRow key={`sk-${i}`} className="border-white/5">
-                  <TableCell colSpan={7}><RowSkeleton cols={6} /></TableCell>
+                  <TableCell colSpan={8}><RowSkeleton cols={7} /></TableCell>
                 </TableRow>
               ))}
               {!loading && filtered.length === 0 && (
                 <TableRow className="border-white/5">
-                  <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-10">
+                  <TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-10">
                     No users found.
                   </TableCell>
                 </TableRow>
@@ -315,6 +317,17 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
                     ) : (
                       <Badge variant="secondary">User</Badge>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold"
+                      style={{
+                        background: `${getVipColor(u.vipLevel)}22`,
+                        color: getVipColor(u.vipLevel),
+                      }}
+                    >
+                      {getVipLabel(u.vipLevel)}
+                    </span>
                   </TableCell>
                   <TableCell className="text-sm font-medium tabular-nums text-[#00c853]">
                     ${fmtMoney(u.balance, 2)}
@@ -408,7 +421,7 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
                   { label: "Role", value: profileUser.role, icon: ShieldCheck },
                   { label: "Balance", value: `$${fmtMoney(profileUser.balance, 2)}`, icon: Wallet },
                   { label: "Frozen Funds", value: `$${fmtMoney(profileUser.frozenFunds || 0, 2)}`, icon: Snowflake },
-                  { label: "VIP Level", value: `VIP ${profileUser.vipLevel}`, icon: BadgeCheck },
+                  { label: "VIP Level", value: getVipLabel(profileUser.vipLevel), icon: BadgeCheck },
                   { label: "KYC Status", value: profileUser.kycStatus || "PENDING", icon: ShieldCheck },
                   { label: "Phone", value: profileUser.phone || "Not set", icon: Phone },
                   { label: "Country", value: profileUser.country || "Not set", icon: Globe },

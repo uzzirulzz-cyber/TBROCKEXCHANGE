@@ -268,7 +268,7 @@ export function AuthView() {
                     <div className="text-xs">
                       <div className="font-medium text-white">Sarah K.</div>
                       <div className="text-muted-foreground uppercase tracking-wider">
-                        VIP 3
+                        🥇 superVIP
                       </div>
                     </div>
                   </div>
