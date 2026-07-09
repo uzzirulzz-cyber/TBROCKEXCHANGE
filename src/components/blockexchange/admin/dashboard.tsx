@@ -28,6 +28,8 @@ import {
   ArrowUpFromLine,
   Clock,
   AlertCircle,
+  RotateCcw,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -39,6 +41,10 @@ import {
 } from "./shared";
 import { COINS } from "@/lib/market-data";
 import { Progress as ProgressUI } from "@/components/ui/progress";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface DashboardProps {
   userId: string;
@@ -51,6 +57,8 @@ export function AdminDashboard({ userId, syncTick }: DashboardProps) {
   const [loading, setLoading] = useState(true);
   const [lastSync, setLastSync] = useState<Date>(new Date());
   const [secondsAgo, setSecondsAgo] = useState(0);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -247,6 +255,84 @@ export function AdminDashboard({ userId, syncTick }: DashboardProps) {
           Last sync: {secondsAgo < 60 ? `${secondsAgo}s ago` : `${Math.floor(secondsAgo / 60)}m ago`}
         </div>
       </div>
+
+      {/* Reset All Balances — danger zone */}
+      <div className="bx-glass rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 border-l-2 border-[#ff3b30]">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(255,59,48,0.15)" }}>
+            <RotateCcw className="w-4 h-4 text-[#ff3b30]" />
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white">Reset All Customer Balances</div>
+            <div className="text-xs text-muted-foreground">
+              Sets every customer's balance + frozen funds to 0. Logged in audit trail. Cannot be undone.
+            </div>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-[#ff3b30]/40 text-[#ff3b30] hover:bg-[#ff3b30]/10"
+          onClick={() => setResetOpen(true)}
+        >
+          <RotateCcw className="w-3.5 h-3.5" /> Reset All to 0
+        </Button>
+      </div>
+
+      {/* Reset confirmation dialog */}
+      <Dialog open={resetOpen} onOpenChange={(v) => !v && setResetOpen(false)}>
+        <DialogContent className="bg-[#0a1428] border-white/10 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-[#ff3b30]">
+              <AlertCircle className="w-5 h-5" />
+              Reset All Customer Balances
+            </DialogTitle>
+            <DialogDescription>
+              This will set <strong className="text-white">every customer's</strong> balance and frozen funds to 0.
+              A WalletLog entry is created for each affected user so the debit appears in their transaction history.
+              This action <strong className="text-[#ff3b30]">cannot be undone</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setResetOpen(false)} disabled={resetting}>
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                setResetting(true);
+                try {
+                  const res = await fetch("/api/admin/reset-balances", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "x-user-id": userId },
+                    body: JSON.stringify({ confirm: true }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    toast.error(data.error || "Reset failed");
+                    return;
+                  }
+                  toast.success(data.message || `Reset ${data.reset} balances to 0`);
+                  setResetOpen(false);
+                  // Reload stats by re-fetching
+                  fetch("/api/admin/stats", { headers: { "x-user-id": userId } })
+                    .then((r) => r.json())
+                    .then((s) => { setStats(s); setLastSync(new Date()); })
+                    .catch(() => {});
+                } catch {
+                  toast.error("Network error");
+                } finally {
+                  setResetting(false);
+                }
+              }}
+              disabled={resetting}
+              className="bg-gradient-to-r from-[#ff3b30] to-[#c62828] text-white"
+            >
+              {resetting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RotateCcw className="w-4 h-4 mr-2" />}
+              Yes, Reset All to 0
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SectionShell>
   );
 }

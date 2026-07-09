@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Plus, TrendingUp, Wallet as WalletIcon, CreditCard, Settings as SettingsIcon,
   ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, History, Eye, EyeOff,
-  Home as HomeIcon, User, Snowflake, Loader2, Sparkles,
+  Home as HomeIcon, User, Snowflake, Loader2, Sparkles, RotateCcw, AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,6 +76,8 @@ export function WalletView() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<null | "deposit" | "withdraw" | "transfer">(null);
   const [hideBalance, setHideBalance] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const prices = useLivePrices();
 
   const load = useCallback(async () => {
@@ -212,6 +214,16 @@ export function WalletView() {
             <SummaryCard label="In Trading" value={fmtMoney(overview?.fundsInTrading ?? 0)} accent="#f5a623" />
           </motion.div>
 
+          {/* ===== RESET BALANCE BUTTON ===== */}
+          <button
+            onClick={() => setResetOpen(true)}
+            disabled={(overview?.availableBalance ?? 0) === 0 && (overview?.frozenFunds ?? 0) === 0}
+            className="w-full py-2.5 rounded-xl text-xs font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-30 mb-5"
+            style={{ background: "rgba(255,69,58,0.1)", color: "#FF453A", border: "1px solid rgba(255,69,58,0.2)" }}
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Reset Balance to 0
+          </button>
+
           {/* ===== YOUR ASSETS — coins list with sparklines ===== */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
@@ -315,6 +327,50 @@ export function WalletView() {
       <DepositModal open={modal === "deposit"} onClose={() => setModal(null)} onDone={load} userId={user.id} />
       <WithdrawModal open={modal === "withdraw"} onClose={() => setModal(null)} onDone={load} userId={user.id} balance={overview?.availableBalance ?? 0} />
       <TransferModal open={modal === "transfer"} onClose={() => setModal(null)} onDone={load} userId={user.id} balance={overview?.availableBalance ?? 0} />
+
+      {/* Reset Balance Dialog */}
+      <Dialog open={resetOpen} onOpenChange={(o) => !o && setResetOpen(false)}>
+        <DialogContent className="bx-glass max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2" style={{ color: T.negative }}>
+              <AlertCircle className="w-5 h-5" /> Reset Balance to 0
+            </DialogTitle>
+            <DialogDescription>
+              This will set your balance and frozen funds to 0. A debit will appear in your transaction history. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-3 rounded-lg" style={{ background: "rgba(255,69,58,0.1)" }}>
+            <div className="text-xs" style={{ color: T.textSec }}>Current balance will be lost:</div>
+            <div className="text-lg font-bold" style={{ color: T.negative }}>
+              {fmtMoney(overview?.availableBalance ?? 0)} + {fmtMoney(overview?.frozenFunds ?? 0)} frozen
+            </div>
+          </div>
+          <Button
+            onClick={async () => {
+              setResetting(true);
+              try {
+                const res = await fetch("/api/wallet/reset", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", "x-user-id": user.id },
+                  body: JSON.stringify({ confirm: true }),
+                });
+                const data = await res.json();
+                if (!res.ok) { toast.error(data.error || "Reset failed"); return; }
+                toast.success("Balance reset to 0");
+                setResetOpen(false);
+                updateBalance(0);
+                load();
+              } catch { toast.error("Network error"); }
+              finally { setResetting(false); }
+            }}
+            disabled={resetting}
+            className="w-full text-white"
+            style={{ background: `linear-gradient(135deg, ${T.negative}, #d32f2f)` }}
+          >
+            {resetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />} Yes, Reset to 0
+          </Button>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

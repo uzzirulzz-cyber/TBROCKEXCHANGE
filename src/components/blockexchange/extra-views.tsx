@@ -37,7 +37,7 @@ import {
   Wallet as WalletIcon, History as HistoryIcon, User as UserIcon, Bell,
   Settings as SettingsIcon, Loader2, Copy, Check, Snowflake, Shield, Mail,
   Phone, Globe, Lock, Eye, EyeOff, Save, LogOut, Filter, Camera,
-  KeyRound, AlertCircle, ArrowLeftRight,
+  KeyRound, AlertCircle, ArrowLeftRight, RotateCcw,
 } from "lucide-react";
 import { ALL_PAYMENT_METHODS } from "@/lib/fiat-countries";
 
@@ -414,7 +414,7 @@ export function WatchlistView() {
 /* ================================ ASSETS ================================= */
 
 export function AssetsView() {
-  const { user, navigate } = useAuth();
+  const { user, navigate, updateBalance } = useAuth();
   const prices = useLivePrices();
 
   if (!user) {
@@ -517,6 +517,30 @@ export function AssetsView() {
             </tbody>
           </table>
         </motion.div>
+
+        {/* Reset Balance */}
+        <button
+          onClick={async () => {
+            if (!confirm("Reset your balance to 0? This cannot be undone.")) return;
+            try {
+              const res = await fetch("/api/wallet/reset", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "x-user-id": user.id },
+                body: JSON.stringify({ confirm: true }),
+              });
+              const data = await res.json();
+              if (!res.ok) { toast.error(data.error || "Reset failed"); return; }
+              toast.success("Balance reset to 0");
+              updateBalance(0);
+              window.location.reload();
+            } catch { toast.error("Network error"); }
+          }}
+          disabled={balance === 0 && frozen === 0}
+          className="w-full mt-4 py-2.5 rounded-xl text-xs font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-30"
+          style={{ background: "rgba(255,69,58,0.1)", color: "#FF453A", border: "1px solid rgba(255,69,58,0.2)" }}
+        >
+          <RotateCcw className="w-3.5 h-3.5" /> Reset Balance to 0
+        </button>
       </div>
     </main>
   );
