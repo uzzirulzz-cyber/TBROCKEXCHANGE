@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (real secrets — never commit)
+.env
+.env.local
+.env.*.local
+# .env.example IS committed (template with no secrets)
+!.env.example
 
 # vercel
 .vercel
@@ -58,8 +62,6 @@ upload/
 # BlockExchange — never commit these
 /upload/
 /download/
-.env
-.env.local
 *.log
 dev.log
 server.log
