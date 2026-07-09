@@ -428,7 +428,7 @@ export function AssetsView() {
   const balance = Number(user.balance) || 0;
   const frozen = Number(user.frozenFunds) || 0;
   const holdings = COINS.map((coin, i) => {
-    const weight = [0.25, 0.18, 0.10, 0.08, 0.05, 0.03, 0.02, 0.02][i] || 0.01;
+    const weight = [0.25, 0.18, 0.10, 0.08, 0.05, 0.03, 0.02, 0.02, 0.01, 0.01][i] || 0.01;
     const qty = (balance * 0.6 * weight) / prices[i].price;
     const value = qty * prices[i].price;
     return { coin, qty, value, price: prices[i].price, change: prices[i].change };

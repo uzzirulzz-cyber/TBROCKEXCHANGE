@@ -30,6 +30,8 @@ export const COINS: Coin[] = [
   { symbol: "XRP", name: "Ripple", pair: "XRP/USDT", basePrice: 0.5821, color: "#23292f", icon: "✕", precision: 5 },
   { symbol: "ADA", name: "Cardano", pair: "ADA/USDT", basePrice: 0.4523, color: "#0033ad", icon: "₳", precision: 5 },
   { symbol: "TRX", name: "TRON", pair: "TRX/USDT", basePrice: 0.1287, color: "#ff060a", icon: "T", precision: 5 },
+  { symbol: "BTS", name: "BitShares", pair: "BTS/USDT", basePrice: 0.0234, color: "#00a8db", icon: "β", precision: 5 },
+  { symbol: "BTG", name: "Bitcoin Gold", pair: "BTG/USDT", basePrice: 28.45, color: "#eba809", icon: "₲", precision: 2 },
 ];
 
 export interface Candle {
