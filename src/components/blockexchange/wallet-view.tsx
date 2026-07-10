@@ -136,24 +136,25 @@ export function WalletView() {
   return (
     <>
       <SonnerToaster richColors position="top-center" />
-      <main className="flex-1 pt-14 pb-24" style={{ background: T.bg, minHeight: "100vh" }}>
+      <main className="flex-1 pt-14 pb-24" style={{ background: "#000000", minHeight: "100vh" }}>
         <div className="mx-auto w-full max-w-[430px] px-4">
 
-          {/* ===== HERO HEADER (navy → purple gradient) ===== */}
+          {/* ===== HERO HEADER (blue gradient #1A73E8 → #4285F4) ===== */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative rounded-3xl overflow-hidden p-6 mb-4"
-            style={{ background: `linear-gradient(135deg, ${T.gradientFrom} 0%, ${T.gradientTo} 100%)` }}
+            style={{ background: "linear-gradient(180deg, #1A73E8 0%, #4285F4 100%)" }}
           >
-            {/* Glow orbs */}
-            <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(156,39,176,0.3), transparent 70%)" }} />
-
             {/* User row */}
             <div className="relative flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur flex items-center justify-center text-white font-bold text-lg border border-white/20">
-                  {user.name.charAt(0).toUpperCase()}
+                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold border border-white/30">
+                  {user.photoUrl ? (
+                    <img src={user.photoUrl} alt={user.name} className="w-full h-full object-cover rounded-full" />
+                  ) : (
+                    user.name.charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div>
                   <div className="text-white font-semibold text-sm">{user.name}</div>
@@ -169,40 +170,74 @@ export function WalletView() {
               </button>
             </div>
 
-            {/* Total Balance */}
+            {/* Total Balance — white text on blue gradient */}
             <div className="relative">
               <div className="text-white/70 text-xs font-medium uppercase tracking-wider">Total Balance</div>
               <div className="text-white text-4xl font-bold mt-1 tabular-nums">
                 {fmtMoney(overview?.totalAssetValue ?? 0)}
               </div>
-              <div className="text-white/50 text-xs mt-1">
+              <div className="text-white/60 text-xs mt-1">
                 ≈ {hideBalance ? "•••" : btcEquivalent.toFixed(4)} BTC
               </div>
               {/* Profit indicator */}
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: "rgba(0,230,118,0.15)" }}>
-                <TrendingUp className="w-3 h-3" style={{ color: T.positive }} />
-                <span className="text-xs font-medium" style={{ color: T.positive }}>
-                  {hideBalance ? "•••" : `+${(overview?.totalProfitGenerated ?? 0).toFixed(2)} USDT`}
-                </span>
-              </div>
+              {(overview?.totalProfitGenerated ?? 0) !== 0 && (
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.15)" }}>
+                  <TrendingUp className="w-3 h-3 text-white" />
+                  <span className="text-xs font-medium text-white">
+                    {hideBalance ? "•••" : `+$${(overview?.totalProfitGenerated ?? 0).toFixed(2)} USDT`}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Action buttons — white circles with blue icons */}
+            <div className="relative grid grid-cols-4 gap-3 mt-5">
+              {[
+                { icon: Plus, label: "Buy", onClick: () => navigate("deposit") },
+                { icon: ArrowUpFromLine, label: "Sell", onClick: () => setModal("withdraw") },
+                { icon: ArrowDownToLine, label: "Deposit", onClick: () => navigate("deposit") },
+                { icon: ArrowLeftRight, label: "Pay", onClick: () => setModal("transfer") },
+              ].map((btn) => {
+                const Icon = btn.icon;
+                return (
+                  <button
+                    key={btn.label}
+                    onClick={btn.onClick}
+                    disabled={overview?.walletLocked}
+                    className="flex flex-col items-center gap-1.5 disabled:opacity-40"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-sm">
+                      <Icon className="w-5 h-5" style={{ color: "#1A73E8" }} />
+                    </div>
+                    <span className="text-[10px] font-medium text-white">{btn.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
 
-          {/* ===== ACTION BUTTONS ROW (5 buttons) ===== */}
+          {/* ===== REFER & EARN (green gradient card) ===== */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="grid grid-cols-5 gap-2 mb-5"
+            className="rounded-2xl p-4 mb-4 relative overflow-hidden"
+            style={{ background: "linear-gradient(135deg, #10B981 0%, #34D399 100%)" }}
           >
-            <ActionButton icon={Plus} label="Add" color={T.positive} onClick={() => setModal("deposit")} disabled={overview?.walletLocked} />
-            <ActionButton icon={ArrowUpFromLine} label="Trade" color={T.accentLight} onClick={() => navigate("trade")} />
-            <ActionButton icon={WalletIcon} label="Wallet" color="#2196f3" onClick={() => document.getElementById("history")?.scrollIntoView({ behavior: "smooth" })} />
-            <ActionButton icon={CreditCard} label="Deposit" color="#FF9F0A" onClick={() => navigate("deposit")} />
-            <ActionButton icon={SettingsIcon} label="Settings" color={T.textSec} onClick={() => navigate("settings")} />
+            <div className="text-white font-bold text-base mb-1">Refer And Get $30 USD</div>
+            <div className="text-white/80 text-xs mb-3 leading-relaxed">
+              You and your friend earn when they complete a few simple trade actions
+            </div>
+            <button
+              onClick={() => toast.info("Referral program coming soon!")}
+              className="px-4 py-1.5 rounded-lg text-xs font-medium"
+              style={{ background: "#FFFFFF", color: "#10B981" }}
+            >
+              Refer Now
+            </button>
           </motion.div>
 
-          {/* ===== ASSETS SUMMARY (Frozen / Available / In Trading) ===== */}
+          {/* ===== ASSETS SUMMARY (Available / Frozen / In Trading) ===== */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
