@@ -38,6 +38,7 @@ import {
   Settings as SettingsIcon, Loader2, Copy, Check, Snowflake, Shield, Mail,
   Phone, Globe, Lock, Eye, EyeOff, Save, LogOut, Filter, Camera,
   KeyRound, AlertCircle, ArrowLeftRight, RotateCcw, MessageCircle,
+  Plus, CreditCard, ShieldCheck,
 } from "lucide-react";
 import { ALL_PAYMENT_METHODS } from "@/lib/fiat-countries";
 
@@ -1075,9 +1076,23 @@ export function HistoryView() {
 
 export function ProfileView() {
   const { user, navigate, logout, setUser } = useAuth();
-  const [showUid, setShowUid] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [stats, setStats] = useState<{ income: number; expense: number }>({ income: 0, expense: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/wallet/transactions", { headers: { "x-user-id": user.id } })
+      .then((r) => r.json())
+      .then((d) => {
+        const deposits = (d.deposits || []).filter((t: any) => t.status === "APPROVED");
+        const withdrawals = (d.withdrawals || []).filter((t: any) => t.status === "APPROVED");
+        const income = deposits.reduce((s: number, t: any) => s + Number(t.amount), 0);
+        const expense = withdrawals.reduce((s: number, t: any) => s + Number(t.amount), 0);
+        setStats({ income, expense });
+      })
+      .catch(() => {});
+  }, [user]);
 
   if (!user) {
     return <main className="flex-1 pt-20 flex items-center justify-center bg-black"><Button onClick={() => navigate("login")}>Please login</Button></main>;
@@ -1086,14 +1101,8 @@ export function ProfileView() {
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
-    }
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image too large. Max 2MB.");
-      return;
-    }
+    if (!file.type.startsWith("image/")) { toast.error("Please select an image file"); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error("Image too large. Max 2MB."); return; }
     setUploading(true);
     try {
       const reader = new FileReader();
@@ -1106,44 +1115,14 @@ export function ProfileView() {
             body: JSON.stringify({ photo }),
           });
           const data = await res.json();
-          if (!res.ok) {
-            toast.error(data.error || "Upload failed");
-            return;
-          }
+          if (!res.ok) { toast.error(data.error || "Upload failed"); return; }
           setUser(data.user);
           toast.success("Profile photo updated");
-        } catch {
-          toast.error("Network error");
-        } finally {
-          setUploading(false);
-        }
+        } catch { toast.error("Network error"); }
+        finally { setUploading(false); }
       };
       reader.readAsDataURL(file);
-    } catch {
-      toast.error("Failed to read file");
-      setUploading(false);
-    }
-  }
-
-  async function handlePhotoRemove() {
-    setUploading(true);
-    try {
-      const res = await fetch("/api/auth/photo", {
-        method: "DELETE",
-        headers: { "x-user-id": user!.id },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error || "Failed to remove photo");
-        return;
-      }
-      setUser(data.user);
-      toast.success("Photo removed");
-    } catch {
-      toast.error("Network error");
-    } finally {
-      setUploading(false);
-    }
+    } catch { toast.error("Failed to read file"); setUploading(false); }
   }
 
   return (
@@ -1151,242 +1130,126 @@ export function ProfileView() {
       <SonnerToaster richColors position="top-center" />
       <div className="mx-auto max-w-md lg:max-w-2xl px-4">
 
-        {/* iOS-style large title */}
+        {/* Header */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
           <h1 className="text-[34px] font-bold text-white tracking-tight">Profile</h1>
         </motion.div>
 
-        {/* Profile hero card — iOS-style */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="rounded-3xl p-6 mb-6 text-center"
-          style={{ background: "linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%)", border: "1px solid #38383A" }}
-        >
-          {/* Photo */}
-          <div className="relative inline-block group mb-4">
-            <div
-              className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center text-3xl font-bold text-white ring-4 ring-white/5"
-              style={{ background: "linear-gradient(135deg, #0A84FF, #0D47A1)" }}
-            >
+        {/* Profile card — avatar + name + email + verified badge */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+          className="rounded-2xl p-6 mb-4 text-center"
+          style={{ background: "linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%)", border: "1px solid #38383A" }}>
+          {/* Avatar with upload */}
+          <div className="relative inline-block group mb-3">
+            <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-2xl font-bold text-white ring-4 ring-white/5"
+              style={{ background: "linear-gradient(135deg, #0A84FF, #0D47A1)" }}>
               {user.photoUrl ? (
                 <img src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
               ) : (
                 user.name.charAt(0).toUpperCase()
               )}
             </div>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-              aria-label="Upload photo"
-            >
-              {uploading ? (
-                <Loader2 className="w-6 h-6 text-white animate-spin" />
-              ) : (
-                <Camera className="w-6 h-6 text-white" />
-              )}
+            <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
+              className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              {uploading ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
             </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-              className="hidden"
-            />
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
           </div>
-
-          <h2 className="text-xl font-bold text-white">{user.name}</h2>
-          <div className="text-sm text-[#8E8E93] mt-0.5">{user.email}</div>
-
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <span
-              className="px-2.5 py-1 rounded-full text-xs font-semibold"
-              style={{ background: "rgba(10,132,255,0.15)", color: "#0A84FF" }}
-            >
-              {user.role === "SUPER_ADMIN" ? "Super Admin" : user.role === "SUB_AGENT" ? "Agent" : "Customer"}
-            </span>
-            {user.role === "CUSTOMER" && (
-              <span
-                className="px-2.5 py-1 rounded-full text-xs font-semibold"
-                style={{
-                  background: `${getVipColor(user.vipLevel)}22`,
-                  color: getVipColor(user.vipLevel),
-                }}
-              >
-                {getVipLabel(user.vipLevel)}
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="px-4 py-2 rounded-full text-xs font-semibold transition-colors"
-              style={{ background: "rgba(10,132,255,0.15)", color: "#0A84FF" }}
-            >
-              <Camera className="w-3.5 h-3.5 inline mr-1.5" />
-              {user.photoUrl ? "Change Photo" : "Upload Photo"}
-            </button>
-            {user.photoUrl && (
-              <button
-                onClick={handlePhotoRemove}
-                disabled={uploading}
-                className="px-4 py-2 rounded-full text-xs font-semibold transition-colors"
-                style={{ background: "rgba(255,69,58,0.15)", color: "#FF453A" }}
-              >
-                Remove
-              </button>
-            )}
-          </div>
-        </motion.div>
-
-        {/* UID card — iOS-style */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="rounded-2xl overflow-hidden mb-6"
-          style={{ background: "#1C1C1E", border: "1px solid #38383A" }}
-        >
-          <button
-            onClick={() => setShowUid((v) => !v)}
-            className="w-full flex items-center justify-between px-4 py-3.5"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(10,132,255,0.15)" }}>
-                <UserIcon className="w-4 h-4" style={{ color: "#0A84FF" }} />
-              </div>
-              <div className="text-left">
-                <div className="text-xs text-[#8E8E93] uppercase tracking-wider">Your UID</div>
-                <div className="text-base font-mono mt-0.5" style={{ color: "#0A84FF" }}>
-                  {showUid ? user.uid : "••••••••••••"}
-                </div>
-              </div>
+          <div className="flex items-center justify-center gap-2">
+            <h2 className="text-lg font-bold text-white">{user.name}</h2>
+            {/* Verified badge */}
+            <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "#FF9F0A" }}>
+              <ShieldCheck className="w-3 h-3 text-white" />
             </div>
-            {showUid ? <EyeOff className="w-4 h-4 text-[#8E8E93]" /> : <Eye className="w-4 h-4 text-[#8E8E93]" />}
-          </button>
+          </div>
+          <div className="text-sm mt-0.5" style={{ color: "#8E8E93" }}>{user.email}</div>
+          <div className="text-xs mt-1 font-mono" style={{ color: "#0A84FF" }}>UID: {user.uid}</div>
         </motion.div>
 
-        {/* iOS-style grouped list — Account Details */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mb-6"
-        >
-          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Account Details</div>
+        {/* Income / Expense cards */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 gap-3 mb-4">
+          <div className="rounded-2xl p-4" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(48,209,88,0.15)" }}>
+                <TrendingUp className="w-4 h-4" style={{ color: "#30D158" }} />
+              </div>
+              <span className="text-xs" style={{ color: "#8E8E93" }}>Income</span>
+            </div>
+            <div className="text-xl font-bold" style={{ color: "#30D158" }}>
+              ${stats.income.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </div>
+          </div>
+          <div className="rounded-2xl p-4" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(255,69,58,0.15)" }}>
+                <TrendingDown className="w-4 h-4" style={{ color: "#FF453A" }} />
+              </div>
+              <span className="text-xs" style={{ color: "#8E8E93" }}>Expense</span>
+            </div>
+            <div className="text-xl font-bold" style={{ color: "#FF453A" }}>
+              ${stats.expense.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Action buttons row */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="grid grid-cols-4 gap-3 mb-6">
+          {[
+            { icon: Plus, label: "Top up", onClick: () => navigate("deposit"), color: "#30D158" },
+            { icon: ArrowUpFromLine, label: "Withdraw", onClick: () => navigate("withdraw"), color: "#FF453A" },
+            { icon: ArrowLeftRight, label: "Send", onClick: () => navigate("messages"), color: "#0A84FF" },
+            { icon: CreditCard, label: "Pay", onClick: () => navigate("wallet"), color: "#FF9F0A" },
+          ].map((btn) => {
+            const Icon = btn.icon;
+            return (
+              <button key={btn.label} onClick={btn.onClick} className="flex flex-col items-center gap-1.5">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: `${btn.color}22` }}>
+                  <Icon className="w-5 h-5" style={{ color: btn.color }} />
+                </div>
+                <span className="text-[10px] font-medium text-white">{btn.label}</span>
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* GENERAL settings menu — iOS-style list */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-4">
+          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">GENERAL</div>
           <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
             {[
-              { icon: Mail, label: "Email (fixed)", value: user.email, color: "#0A84FF" },
-              { icon: Phone, label: "Phone (fixed)", value: user.phone || "Not set", color: "#30D158" },
-              { icon: Globe, label: "Country", value: user.country || "Not set", color: "#BF5AF2" },
-              { icon: Shield, label: "KYC Status", value: user.kycStatus || "Not verified", color: user.kycStatus === "VERIFIED" ? "#30D158" : "#FF9F0A" },
-              { icon: Lock, label: "Account Status", value: user.status || "Active", color: "#30D158" },
-            ].map((f, i, arr) => {
-              const Icon = f.icon;
+              { icon: UserIcon, label: "Profile Settings", view: "settings" as const, color: "#0A84FF" },
+              { icon: Lock, label: "Change Password", view: "settings" as const, color: "#FF9F0A" },
+              { icon: Bell, label: "Notifications", view: "notifications" as const, color: "#FF453A" },
+              { icon: HistoryIcon, label: "Transaction History", view: "history" as const, color: "#30D158" },
+              { icon: ShieldCheck, label: "KYC Verification", view: "kyc" as const, color: "#BF5AF2" },
+              { icon: MessageCircle, label: "Messages", view: "messages" as const, color: "#0A84FF" },
+            ].map((item, i, arr) => {
+              const Icon = item.icon;
               const isLast = i === arr.length - 1;
               return (
-                <div
-                  key={f.label}
-                  className="flex items-center gap-3 px-4 py-3.5"
-                  style={{
-                    borderBottom: isLast ? "none" : "1px solid #38383A",
-                  }}
-                >
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${f.color}22` }}>
-                    <Icon className="w-4 h-4" style={{ color: f.color }} />
+                <button key={item.label} onClick={() => navigate(item.view)}
+                  className="w-full flex items-center gap-3 px-4 py-3.5"
+                  style={{ borderBottom: isLast ? "none" : "1px solid #38383A" }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${item.color}22` }}>
+                    <Icon className="w-4 h-4" style={{ color: item.color }} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs text-[#8E8E93]">{f.label}</div>
-                    <div className="text-sm text-white truncate">{f.value}</div>
-                  </div>
-                </div>
+                  <span className="flex-1 text-left text-white text-base">{item.label}</span>
+                  <svg className="w-5 h-5" style={{ color: "#48484A" }} viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
               );
             })}
           </div>
         </motion.div>
 
-        {/* iOS-style grouped list — Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6"
-        >
-          <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Quick Actions</div>
-          <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
-            <button
-              onClick={() => navigate("settings")}
-              className="w-full flex items-center gap-3 px-4 py-3.5"
-              style={{ borderBottom: "1px solid #38383A" }}
-            >
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(10,132,255,0.15)" }}>
-                <SettingsIcon className="w-4 h-4" style={{ color: "#0A84FF" }} />
-              </div>
-              <span className="flex-1 text-left text-white text-base">Settings</span>
-              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              onClick={() => navigate("kyc")}
-              className="w-full flex items-center gap-3 px-4 py-3.5"
-              style={{ borderBottom: "1px solid #38383A" }}
-            >
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(48,209,88,0.15)" }}>
-                <Shield className="w-4 h-4" style={{ color: "#30D158" }} />
-              </div>
-              <span className="flex-1 text-left text-white text-base">Verify Identity (KYC)</span>
-              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              onClick={() => navigate("notifications")}
-              className="w-full flex items-center gap-3 px-4 py-3.5"
-              style={{ borderBottom: "1px solid #38383A" }}
-            >
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(255,159,10,0.15)" }}>
-                <Bell className="w-4 h-4" style={{ color: "#FF9F0A" }} />
-              </div>
-              <span className="flex-1 text-left text-white text-base">Notifications</span>
-              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              onClick={() => navigate("messages")}
-              className="w-full flex items-center gap-3 px-4 py-3.5"
-            >
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(10,132,255,0.15)" }}>
-                <MessageCircle className="w-4 h-4" style={{ color: "#0A84FF" }} />
-              </div>
-              <span className="flex-1 text-left text-white text-base">Messages</span>
-              <svg className="w-5 h-5 text-[#48484A]" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Logout button — iOS-style */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="rounded-2xl overflow-hidden"
-          style={{ background: "#1C1C1E", border: "1px solid #38383A" }}
-        >
-          <button
-            onClick={logout}
-            className="w-full px-4 py-3.5 text-center text-base font-medium"
-            style={{ color: "#FF453A" }}
-          >
-            <LogOut className="w-4 h-4 inline mr-2" />
-            Logout
+        {/* Logout — iOS red button */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+          className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
+          <button onClick={logout} className="w-full px-4 py-3.5 text-center text-base font-medium" style={{ color: "#FF453A" }}>
+            <LogOut className="w-4 h-4 inline mr-2" /> Logout
           </button>
         </motion.div>
       </div>

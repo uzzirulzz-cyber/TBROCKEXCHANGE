@@ -173,25 +173,9 @@ export function AdminLoginView() {
             </form>
 
             <div className="mt-6 pt-5 border-t border-white/5">
-              <p className="text-[11px] text-muted-foreground text-center mb-3">Quick Staff Login</p>
-              <div className="grid grid-cols-2 gap-2">
-                {STAFF_ACCOUNTS.map((acc) => (
-                  <button
-                    key={acc.email}
-                    onClick={() => quickLogin(acc)}
-                    disabled={loading}
-                    className="px-3 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-40"
-                    style={{
-                      background: acc.role === "SUPER_ADMIN" ? "linear-gradient(135deg, #2196f3, #0d47a1)" : "rgba(255,255,255,0.05)",
-                      border: acc.role === "SUPER_ADMIN" ? "none" : "1px solid rgba(125,168,230,0.15)",
-                      color: "#fff",
-                    }}
-                  >
-                    {acc.role === "SUPER_ADMIN" ? "👑 " : ""}{acc.label}
-                    {acc.code && <span className="block text-[9px] opacity-60">{acc.code}</span>}
-                  </button>
-                ))}
-              </div>
+              <p className="text-[11px] text-muted-foreground text-center">
+                Staff credentials are stored securely in the database. Use your registered email and password to sign in.
+              </p>
             </div>
           </div>
           <p className="mt-4 text-center text-[11px] text-muted-foreground">
