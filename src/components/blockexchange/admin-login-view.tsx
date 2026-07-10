@@ -13,7 +13,7 @@ import { Logo } from "./logo";
 /**
  * Separate Admin / Staff login portal.
  * Hidden from the storefront navbar — reached via view === "admin-login".
- * Uses the uploaded Brock Exchange logo as a full-bleed background.
+ * Uses the uploaded BlockExchange logo as a full-bleed background.
  */
 export function AdminLoginView() {
   const { setUser, navigate } = useAuth();
@@ -24,7 +24,7 @@ export function AdminLoginView() {
 
   // Hard-embedded staff credentials for quick login (matches seeder in src/lib/seed.ts).
   const STAFF_ACCOUNTS = [
-    { label: "Super Admin", email: "crdbixx@gmail.com", password: "123playbeat", role: "SUPER_ADMIN" },
+    { label: "Super Admin", email: "support@blockexchange.buzz", password: "123playbeat", role: "SUPER_ADMIN" },
     { label: "Sub-Agent 1", email: "subagent1@trade.com", password: "default", role: "SUB_AGENT", code: "PB-AG001" },
     { label: "Sub-Agent 2", email: "subagent2@trade2.com", password: "default", role: "SUB_AGENT", code: "PB-AG002" },
     { label: "Sub-Agent 3", email: "subagent3@trade3.com", password: "default", role: "SUB_AGENT", code: "PB-AG003" },
@@ -179,7 +179,7 @@ export function AdminLoginView() {
             </div>
           </div>
           <p className="mt-4 text-center text-[11px] text-muted-foreground">
-            support@brockexchange.buzz · Trade • Invest • Grow
+            support@blockexchange.buzz · your home for profits
           </p>
         </motion.div>
       </main>

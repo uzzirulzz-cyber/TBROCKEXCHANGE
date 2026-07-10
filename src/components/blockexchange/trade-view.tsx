@@ -367,7 +367,7 @@ function MarketplaceStep({ coin, onSelectCoin, candles, lastPrice, change24h, on
         <div className="space-y-3">
           <p className="text-sm mb-3" style={{ color: T.textSec }}>Trusted partner sites for trading and DeFi:</p>
           {[
-            { name: "Brock Exchange DEX", desc: "Decentralized trading with 0.3% fees", icon: "\uD83D\uDD04" },
+            { name: "BlockExchange DEX", desc: "Decentralized trading with 0.3% fees", icon: "\uD83D\uDD04" },
             { name: "Brock Staking Pool", desc: "Earn up to 12% APY on your crypto", icon: "\uD83D\uDC8E" },
             { name: "Brock NFT Marketplace", desc: "Mint, buy, and sell NFTs", icon: "\uD83C\uDFA8" },
             { name: "Brock Bridge", desc: "Cross-chain transfers at low fees", icon: "\uD83C\uDF09" },

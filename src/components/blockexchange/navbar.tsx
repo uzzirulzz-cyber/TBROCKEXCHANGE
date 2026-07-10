@@ -70,7 +70,7 @@ export function Navbar({ minimal = false }: NavbarProps) {
           <button
             onClick={() => go("home")}
             className="flex items-center transition-transform hover:scale-[1.02] shrink-0"
-            aria-label="Brock Exchange home"
+            aria-label="BlockExchange home"
           >
             <Logo size={36} tagline={false} />
           </button>

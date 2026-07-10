@@ -48,7 +48,7 @@ export function Footer() {
 
         <div className="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Brock Exchange. All rights reserved. support@blockexchange.buzz
+            © {new Date().getFullYear()} BlockExchange. All rights reserved. support@blockexchange.buzz
           </p>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">

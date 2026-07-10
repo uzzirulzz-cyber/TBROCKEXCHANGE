@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Security section.
+ * BlockExchange admin — Security section.
  *
  * UI-only. Cards: 2FA, Admin Roles, Permissions matrix, IP Whitelist,
  * Audit Logs.

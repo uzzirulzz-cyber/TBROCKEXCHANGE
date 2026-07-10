@@ -9,7 +9,7 @@ import { MongoClient, Db } from "mongodb";
  * hardcoded fallback in src/lib/env.ts — whichever is set first.
  */
 const uri = process.env.MONGODB_URI;
-const dbName = "brockexchange";
+const dbName = "blockexchange";
 
 let client: MongoClient | null = null;
 let db: Db | null = null;

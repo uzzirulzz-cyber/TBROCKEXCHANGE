@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Wallet Management section.
+ * BlockExchange admin — Wallet Management section.
  *
  * UI-only (mock data) — covers:
  *  - 3 top summary cards (Total Platform Balance / Pending Deposits / Pending Withdrawals)

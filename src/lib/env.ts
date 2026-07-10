@@ -1,5 +1,5 @@
 /**
- * Brock Exchange — embedded environment defaults.
+ * BlockExchange — embedded environment defaults.
  *
  * This module hardcodes the production database credentials so the app
  * works on hosting platforms (Vercel, Railway, etc.) WITHOUT requiring

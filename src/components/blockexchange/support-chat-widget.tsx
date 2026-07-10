@@ -153,7 +153,7 @@ export function SupportChatWidget() {
                   <Headset className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white">Brock Exchange Support</div>
+                  <div className="text-sm font-semibold text-white">BlockExchange Support</div>
                   <div className="text-[11px] text-[#00c853] flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00c853] bx-pulse-dot" />
                     Online · typically replies in minutes

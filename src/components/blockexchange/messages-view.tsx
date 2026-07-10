@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — Direct Messages view (chat box).
+ * BlockExchange — Direct Messages view (chat box).
  *
  * Inbox list + conversation thread + compose.
  * iPhone-style black theme.
@@ -164,7 +164,7 @@ export function MessagesView() {
   async function startSupportChat() {
     if (!user) return;
     try {
-      const res = await fetch("/api/users/search?q=crdbixx", {
+      const res = await fetch("/api/users/search?q=support@blockexchange", {
         headers: { "x-user-id": user.id },
       });
       const data = await res.json();
@@ -172,7 +172,7 @@ export function MessagesView() {
       if (admin) {
         startConversationWith({
           id: admin.id,
-          name: "Brock Exchange Support",
+          name: "BlockExchange Support",
           email: admin.email,
           photoUrl: "",
         });
@@ -299,7 +299,7 @@ export function MessagesView() {
             <Headset className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-semibold text-white">Brock Exchange Support</div>
+            <div className="text-sm font-semibold text-white">BlockExchange Support</div>
             <div className="text-xs text-white/70">Tap to chat with our help line</div>
           </div>
           <svg className="w-5 h-5 text-white/50" viewBox="0 0 24 24" fill="none">

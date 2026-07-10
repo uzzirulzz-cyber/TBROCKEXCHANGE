@@ -42,7 +42,7 @@ export function PWAInstallPrompt() {
             <button onClick={dismiss} className="absolute top-3 right-3 p-1 rounded-lg text-muted-foreground hover:text-white" aria-label="Dismiss"><X className="w-4 h-4" /></button>
             <div className="flex items-start gap-3 pr-6">
               <div className="w-11 h-11 rounded-xl bx-blue-gradient flex items-center justify-center shrink-0"><Download className="w-5 h-5 text-white" /></div>
-              <div><h3 className="text-sm font-bold text-white">Install Brock Exchange App</h3><p className="text-xs text-muted-foreground mt-0.5">{platform === "ios" ? "Add to Home Screen for a native app experience." : "Install on your device for fast access."}</p></div>
+              <div><h3 className="text-sm font-bold text-white">Install BlockExchange App</h3><p className="text-xs text-muted-foreground mt-0.5">{platform === "ios" ? "Add to Home Screen for a native app experience." : "Install on your device for fast access."}</p></div>
             </div>
             <div className="mt-4 flex gap-2">
               <button onClick={install} className="flex-1 h-9 rounded-lg bx-blue-gradient text-white text-sm font-medium flex items-center justify-center gap-1.5"><Download className="w-3.5 h-3.5" /> Install now</button>

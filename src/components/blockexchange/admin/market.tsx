@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Market Management section.
+ * BlockExchange admin — Market Management section.
  *
  * UI-only. Lists the 8 COINS with per-coin enable switch + price/change,
  * supports Add/Edit/Remove via dialogs, and has a Maintenance Mode master
@@ -331,7 +331,7 @@ function AddCoinDialog({
           <Plus className="w-4 h-4 text-[#0ea5ff]" />
           Add New Trading Pair
         </DialogTitle>
-        <DialogDescription>Register a new coin for the Brock Exchange trading platform.</DialogDescription>
+        <DialogDescription>Register a new coin for the BlockExchange trading platform.</DialogDescription>
       </DialogHeader>
       <CoinFormFields
         symbol={symbol}

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Dashboard section.
+ * BlockExchange admin — Dashboard section.
  *
  * Fetches real data from GET /api/admin/stats (with x-user-id header).
  * Renders: 8 stat cards, a 7-day revenue AreaChart, top-5 coin volume

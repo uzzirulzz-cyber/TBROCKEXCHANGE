@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — Home (landing) view.
+ * BlockExchange — Home (landing) view.
  *
  * Renders the full landing page when `view === "home"`. The parent page.tsx is
  * responsible for showing <Navbar /> and <Footer />; this component only renders
@@ -414,7 +414,7 @@ export function HomeView() {
 
               <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.05]">
                 Trade Crypto Smarter with{" "}
-                <span className="bx-text-gradient">Brock Exchange</span>
+                <span className="bx-text-gradient">BlockExchange</span>
               </h1>
 
               <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
@@ -594,7 +594,7 @@ export function HomeView() {
                 Ready to start trading?
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Join Brock Exchange today, open your account in seconds, and start trading 8 top cryptocurrencies with up to 50% returns.
+                Join BlockExchange today, open your account in seconds, and start trading 8 top cryptocurrencies with up to 50% returns.
               </p>
               <div className="mt-7">
                 <Button
@@ -647,7 +647,7 @@ export function HomeView() {
               Opportunities to Earn More
             </h2>
             <p className="text-sm text-muted-foreground text-center mb-8 max-w-xl mx-auto">
-              Maximize your earnings with these proven strategies on Brock Exchange
+              Maximize your earnings with these proven strategies on BlockExchange
             </p>
           </motion.div>
 
@@ -711,7 +711,7 @@ export function HomeView() {
               What Our Traders Say
             </h2>
             <p className="text-sm text-muted-foreground text-center mb-8">
-              Real stories from real Brock Exchange users
+              Real stories from real BlockExchange users
             </p>
           </motion.div>
 
@@ -722,7 +722,7 @@ export function HomeView() {
                 role: "🥇 superVIP Trader",
                 avatar: "S",
                 avatarColor: "#0A84FF",
-                text: "I've been trading on Brock Exchange for 3 months. The 120s trades give me the best returns — I turned $100 into $150 in just 2 minutes!",
+                text: "I've been trading on BlockExchange for 3 months. The 120s trades give me the best returns — I turned $100 into $150 in just 2 minutes!",
                 profit: "+$2,450",
               },
               {

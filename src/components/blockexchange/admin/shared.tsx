@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — shared types + small reusable UI components.
+ * BlockExchange admin — shared types + small reusable UI components.
  *
  * Exported:
  *  - Types: AdminStats, AdminUser, AdminTrade, AdminSection
@@ -29,6 +29,7 @@ export type AdminSection =
   | "market"
   | "payments"
   | "kyc"
+  | "messages"
   | "messaging"
   | "reports"
   | "security"

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — Mobile bottom tab bar.
+ * BlockExchange — Mobile bottom tab bar.
  *
  * Fixed at the bottom of the screen on mobile only (hidden on lg+).
  * Shows 5 primary tabs + a "More" button that opens a sheet with

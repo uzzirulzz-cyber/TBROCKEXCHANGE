@@ -427,3 +427,46 @@ Stage Summary:
 - tsc clean, lint clean, build succeeds.
 - Production-ready: set DATABASE_URL + DIRECT_URL in .env, run `bun run db:push` (to apply Notification model), `bun run dev`.
 - Logo: still a text+SVG wordmark since no image file was attached to the chat. To use the real Brock Exchange logo, replace src/components/blockexchange/logo.tsx with an <img> tag pointing to the uploaded asset, and drop the PNG/SVG into /public/.
+
+---
+Task ID: 12
+Agent: orchestrator (main)
+Task: Rebrand to BlockExchange + logo + admin customer messages + support email
+
+Work Log:
+- Rebranded ALL "Brock Exchange" → "BlockExchange" across entire src/ (27+ files)
+- Rebranded ALL "brockexchange" → "blockexchange" (URLs, localStorage keys, DB names)
+- Updated tagline: "Trade • Invest • Grow" → "your home for profits"
+- Copied official logo to /public/blockexchange-logo.png
+- Rewrote logo.tsx to use the official logo image (was SVG cube)
+- Updated layout.tsx metadata: title, description, OG, Twitter, icons, favicon
+- Updated admin email: crdbixx@gmail.com → support@blockexchange.buzz
+- Updated seed.ts: Super Admin email = support@blockexchange.buzz / 123playbeat
+- Updated admin-login-view.tsx: footer text, STAFF_ACCOUNTS email
+- Updated auth-store: persist key = "blockexchange-auth", version 11
+
+ADMIN CUSTOMER MESSAGES:
+- New admin section: "Customer Messages" (sidebar, under Operations)
+- New component: src/components/blockexchange/admin/messages.tsx
+- Admin sees inbox of all customer conversations
+- Admin can click any conversation → see full thread → reply
+- Auto-refreshes every 10s for new messages
+- Blue (#007BFF) sent bubbles, dark blue (#1E3A5F) received bubbles
+- Unread badge (red circle) on conversations with new messages
+- Admin can reply directly from the panel → message appears in customer's inbox
+
+CUSTOMER MESSAGING:
+- Customer Messages view has "BlockExchange Support" button at top
+- Tapping it searches for support@blockexchange.buzz (the Super Admin)
+- Opens a conversation thread with the admin
+- Customer can send messages → admin sees them in Customer Messages section
+- Admin can reply → customer sees the reply in their Messages inbox
+- Full bidirectional communication between customer and admin support
+
+SECTION_META updated:
+- "Customer Messages" section added to admin panel
+- "Broadcast" (was "Messaging") renamed for clarity
+
+tsc: 0 errors
+lint: 0 errors
+build: succeeds

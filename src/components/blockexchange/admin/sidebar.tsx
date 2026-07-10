@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — sidebar navigation.
+ * BlockExchange admin — sidebar navigation.
  *
  * Shows the logo + "Admin Panel" subtitle, a grouped list of 10 nav items
  * (icon + label) with the active item highlighted, and a footer with
@@ -25,6 +25,7 @@ import {
   LogOut,
   ArrowLeft,
   IdCard,
+  MessageCircle,
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/blockexchange/logo";
@@ -47,7 +48,8 @@ const NAV_ITEMS: NavItem[] = [
   { id: "market", label: "Market Management", icon: Coins, group: "Operations" },
   { id: "payments", label: "Payments", icon: CreditCard, group: "Operations" },
   { id: "kyc", label: "KYC Verifications", icon: IdCard, group: "Operations" },
-  { id: "messaging", label: "Messaging", icon: Megaphone, group: "Operations" },
+  { id: "messages", label: "Customer Messages", icon: MessageCircle, group: "Operations" },
+  { id: "messaging", label: "Broadcast", icon: Megaphone, group: "Operations" },
   { id: "reports", label: "Reports", icon: BarChart3, group: "System" },
   { id: "security", label: "Security", icon: ShieldCheck, group: "System" },
   { id: "settings", label: "Settings", icon: SettingsIcon, group: "System" },
@@ -71,7 +73,7 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
           <Logo size={32} tagline={false} />
           <div>
             <div className="text-sm font-bold leading-tight text-white">Admin Panel</div>
-            <div className="text-[10px] uppercase tracking-wider" style={{ color: "#FFFFFF80" }}>Brock Exchange</div>
+            <div className="text-[10px] uppercase tracking-wider" style={{ color: "#FFFFFF80" }}>BlockExchange</div>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — User Management section.
+ * BlockExchange admin — User Management section.
  *
  * Fetches real data from GET /api/admin/users.
  * Search by UID / email / name.

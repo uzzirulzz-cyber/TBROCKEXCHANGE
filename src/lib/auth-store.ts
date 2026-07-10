@@ -137,7 +137,7 @@ export const useAuth = create<AuthState>()(
       },
     }),
     {
-      name: "brockexchange-auth",
+      name: "blockexchange-auth",
       version: 10,
       onRehydrateStorage: () => (state) => {
         if (state) state.hydrated = true;

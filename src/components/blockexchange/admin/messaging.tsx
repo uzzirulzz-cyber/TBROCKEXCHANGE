@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Messaging section.
+ * BlockExchange admin — Messaging section.
  *
  * UI-only. 4 cards: Broadcast, Push Notification, Email Campaign, Popup
  * Announcement, plus a recent-messages log table.
@@ -55,7 +55,7 @@ interface LogEntry {
 
 const LOG: LogEntry[] = [
   { id: "msg_01", type: "Broadcast", title: "Scheduled maintenance — July 10", audience: "All Users", sentAt: "2026-07-07T15:00:00Z", status: "APPROVED" },
-  { id: "msg_02", type: "Email", title: "Welcome to Brock Exchange VIP", audience: "VIP Users", sentAt: "2026-07-06T12:30:00Z", status: "APPROVED" },
+  { id: "msg_02", type: "Email", title: "Welcome to BlockExchange VIP", audience: "VIP Users", sentAt: "2026-07-06T12:30:00Z", status: "APPROVED" },
   { id: "msg_03", type: "Push", title: "BTC just broke $68k 🚀", audience: "All Users", sentAt: "2026-07-06T09:15:00Z", status: "APPROVED" },
   { id: "msg_04", type: "Popup", title: "Claim your 50 USDT bonus", audience: "New Users", sentAt: "2026-07-05T18:45:00Z", status: "PENDING" },
 ];
@@ -177,7 +177,7 @@ export function AdminMessaging() {
           <div className="space-y-3">
             <div className="space-y-1.5">
               <Label className="text-xs">Subject</Label>
-              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Welcome to Brock Exchange VIP" className="bg-background/40" />
+              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Welcome to BlockExchange VIP" className="bg-background/40" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Body</Label>

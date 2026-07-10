@@ -43,7 +43,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Brock Exchange brand palette
+/* BlockExchange brand palette
    Deep Navy #081426 (page base)
    Electric Blue #0EA5FF / #2196F3 -> #0D47A1 (gradient)
    Silver #D1D5DB / #E0E0E0
@@ -152,7 +152,7 @@
   }
 }
 
-/* Utility helpers used across Brock Exchange views */
+/* Utility helpers used across BlockExchange views */
 @layer utilities {
   .bx-glass {
     background: linear-gradient(180deg, rgba(20, 34, 64, 0.78) 0%, rgba(8, 18, 38, 0.78) 100%);

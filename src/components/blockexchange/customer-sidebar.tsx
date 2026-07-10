@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — Customer Desktop Sidebar.
+ * BlockExchange — Customer Desktop Sidebar.
  *
  * Shows on lg+ screens only (hidden on mobile where MobileTabBar is used).
  * Provides vertical navigation for all customer views.

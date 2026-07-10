@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — extra storefront views.
+ * BlockExchange — extra storefront views.
  *
  * These views extend the storefront navigation beyond the original
  * home/trade/wallet/admin set. Each is functional and wired to real
@@ -44,7 +44,7 @@ import { ALL_PAYMENT_METHODS } from "@/lib/fiat-countries";
 
 /* ----------------------------- shared helpers ---------------------------- */
 
-const WATCHLIST_KEY = "brockexchange-watchlist";
+const WATCHLIST_KEY = "blockexchange-watchlist";
 
 function useWatchlist() {
   const [list, setList] = useState<string[]>(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Payments section.
+ * BlockExchange admin — Payments section.
  *
  * UI-only. Tabs for: Bank Accounts | Crypto Wallets | Cards | Gateways | Manual.
  */
@@ -50,10 +50,10 @@ interface BankAccount {
 }
 
 const BANKS: BankAccount[] = [
-  { id: "b1", bank: "HSBC UK", holder: "Brock Exchange Ltd", iban: "GB29 NWBK 6016 1331 9268 19", status: "APPROVED" },
-  { id: "b2", bank: "Deutsche Bank", holder: "Brock Exchange Ltd", iban: "DE89 3704 0044 0532 0130 00", status: "APPROVED" },
-  { id: "b3", bank: "DBS Singapore", holder: "Brock Exchange Asia", iban: "SG-MBR-0001-2345-6789", status: "PENDING" },
-  { id: "b4", bank: "Chase Bank", holder: "Brock Exchange Inc", iban: "US64 SVBK 6000 0000 0000 0000", status: "APPROVED" },
+  { id: "b1", bank: "HSBC UK", holder: "BlockExchange Ltd", iban: "GB29 NWBK 6016 1331 9268 19", status: "APPROVED" },
+  { id: "b2", bank: "Deutsche Bank", holder: "BlockExchange Ltd", iban: "DE89 3704 0044 0532 0130 00", status: "APPROVED" },
+  { id: "b3", bank: "DBS Singapore", holder: "BlockExchange Asia", iban: "SG-MBR-0001-2345-6789", status: "PENDING" },
+  { id: "b4", bank: "Chase Bank", holder: "BlockExchange Inc", iban: "US64 SVBK 6000 0000 0000 0000", status: "APPROVED" },
 ];
 
 interface CryptoWallet {

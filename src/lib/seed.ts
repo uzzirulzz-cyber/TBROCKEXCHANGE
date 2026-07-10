@@ -1,8 +1,8 @@
 /**
- * Brock Exchange default-account seeder.
+ * BlockExchange default-account seeder.
  *
  * Idempotent — safe to call multiple times. Creates:
- *   - 1 Super Admin (crdbixx@gmail.com / 123playbeat)
+ *   - 1 Super Admin (support@blockexchange.buzz / 123playbeat)
  *   - 5 Sub-Agents (subagentN@tradeN.com / default) with invitation codes PB-AG001..PB-AG005
  *
  * Sub-Agent accounts are created with mustChangePassword=true so they are forced
@@ -18,7 +18,7 @@ import { hashPassword, generateUid } from "@/lib/api-auth";
 const SEED_ACCOUNTS = [
   {
     name: "Super Admin",
-    email: "crdbixx@gmail.com",
+    email: "support@blockexchange.buzz",
     password: "123playbeat",
     role: "SUPER_ADMIN",
     invitationCode: null as string | null,

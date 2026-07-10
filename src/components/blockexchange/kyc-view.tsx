@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — KYC Verification view.
+ * BlockExchange — KYC Verification view.
  *
  * Lets users upload identity documents (passport / driving license / national ID)
  * for admin verification. Stored as base64 in the DB.

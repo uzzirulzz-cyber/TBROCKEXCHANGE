@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Reports section.
+ * BlockExchange admin — Reports section.
  *
  * UI with recharts. Daily / Weekly / Monthly segmented control. 4 chart cards:
  *  - Revenue (BarChart)

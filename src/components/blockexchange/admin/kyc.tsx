@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — KYC Verifications section.
+ * BlockExchange admin — KYC Verifications section.
  *
  * Lists all KYC submissions with status filter.
  * Click to view full document images + approve/reject.

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange — Admin Panel view.
+ * BlockExchange — Admin Panel view.
  *
  * Rendered by parent page.tsx when `view === "admin"`. The parent provides
  * <Navbar /> above and <Footer /> below; this component renders
@@ -36,6 +36,7 @@ import { AdminTrades } from "./admin/trades";
 import { AdminMarket } from "./admin/market";
 import { AdminPayments } from "./admin/payments";
 import { AdminKyc } from "./admin/kyc";
+import { AdminMessages } from "./admin/messages";
 import { AdminMessaging } from "./admin/messaging";
 import { AdminReports } from "./admin/reports";
 import { AdminSecurity } from "./admin/security";
@@ -50,7 +51,8 @@ const SECTION_META: Record<AdminSection, { title: string; description: string }>
   market: { title: "Market Management", description: "Tradable pairs and pricing feed" },
   payments: { title: "Payments", description: "Banks, cards, gateways, and manual ops" },
   kyc: { title: "KYC Verifications", description: "Review identity documents" },
-  messaging: { title: "Messaging", description: "Broadcast, push, email, and popups" },
+  messages: { title: "Customer Messages", description: "Support chat with customers" },
+  messaging: { title: "Broadcast", description: "Broadcast, push, email, and popups" },
   reports: { title: "Reports", description: "Aggregated analytics and exports" },
   security: { title: "Security", description: "2FA, roles, IP whitelist, audit logs" },
   settings: { title: "Settings", description: "General, trading, SEO, SMTP, SMS, API keys" },
@@ -85,7 +87,7 @@ export function AdminView() {
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Super Admin access required</h1>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-              You don&apos;t have permission to view this panel. Sign in with a Super Admin account to manage the Brock Exchange platform.
+              You don&apos;t have permission to view this panel. Sign in with a Super Admin account to manage the BlockExchange platform.
             </p>
             <Button
               className="bg-gradient-to-r from-[#2196F3] to-[#0D47A1] text-white w-full"
@@ -175,6 +177,7 @@ export function AdminView() {
               {section === "market" && <AdminMarket />}
               {section === "payments" && <AdminPayments />}
               {section === "kyc" && <AdminKyc userId={user.id} syncTick={syncTick} />}
+              {section === "messages" && <AdminMessages userId={user.id} />}
               {section === "messaging" && <AdminMessaging />}
               {section === "reports" && <AdminReports />}
               {section === "security" && <AdminSecurity />}
@@ -183,7 +186,7 @@ export function AdminView() {
 
             {/* Footer note */}
             <div className="mt-6 flex items-center justify-between text-xs text-muted-foreground">
-              <Badge variant="secondary" className="font-mono">Brock Exchange Admin Panel v1.0</Badge>
+              <Badge variant="secondary" className="font-mono">BlockExchange Admin Panel v1.0</Badge>
               <span>All actions are logged to the audit trail.</span>
             </div>
           </div>

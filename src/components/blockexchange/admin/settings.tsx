@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Settings section.
+ * BlockExchange admin — Settings section.
  *
  * UI-only. Sectioned form: General / Trading / Maintenance / SEO / SMTP / SMS / API Keys.
  * All Save actions surface a "" toast.
@@ -69,7 +69,7 @@ const INITIAL_KEYS: ApiKey[] = [
 ];
 
 export function AdminSettings() {
-  const [siteName, setSiteName] = useState("Brock Exchange");
+  const [siteName, setSiteName] = useState("BlockExchange");
   const [heroTitle, setHeroTitle] = useState("Trade • Invest • Grow");
   const [heroSubtitle, setHeroSubtitle] = useState("Lightning-fast crypto binary options with up to 50% returns in 120s.");
   const [accent, setAccent] = useState("#0ea5ff");
@@ -84,7 +84,7 @@ export function AdminSettings() {
   const [maintenance, setMaintenance] = useState(false);
   const [maintMsg, setMaintMsg] = useState("We're performing scheduled maintenance. Please check back shortly.");
 
-  const [metaTitle, setMetaTitle] = useState("Brock Exchange — Crypto Trading Platform");
+  const [metaTitle, setMetaTitle] = useState("BlockExchange — Crypto Trading Platform");
   const [metaDesc, setMetaDesc] = useState("Trade crypto binary options with up to 50% returns in 120s.");
   const [metaKeywords, setMetaKeywords] = useState("crypto, bitcoin, trading, binary options, ethereum");
 

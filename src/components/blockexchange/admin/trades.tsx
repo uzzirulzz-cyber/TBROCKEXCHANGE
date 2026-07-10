@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Brock Exchange admin — Trade Management section.
+ * BlockExchange admin — Trade Management section.
  *
  * Fetches real data from GET /api/admin/trades.
  * Filter row (All / Active / Settled / Pending), a scrollable trades table

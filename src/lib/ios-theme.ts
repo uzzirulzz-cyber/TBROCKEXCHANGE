@@ -1,5 +1,5 @@
 /**
- * Brock Exchange — iPhone-style theme tokens.
+ * BlockExchange — iPhone-style theme tokens.
  *
  * Pure black background, system-gray cards, rounded-3xl corners,
  * iOS-style list rows with chevron right indicators.
