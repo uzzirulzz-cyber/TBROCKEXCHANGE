@@ -396,16 +396,17 @@ export function HomeView() {
 
   return (
     <div className="bx-fade-in">
-      {/* 1. Hero */}
-      <section className="relative pt-24 min-h-screen flex items-center bx-grid-bg overflow-hidden">
+      {/* 1. Hero — centered */}
+      <section className="relative pt-20 pb-16 min-h-[90vh] flex items-center justify-center bx-grid-bg overflow-hidden">
         <FloatingCoins />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center justify-items-center">
             {/* Left: copy */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              className="text-center lg:text-left w-full"
             >
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bx-glass-soft text-xs font-medium text-white/90">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00c853] bx-pulse-dot" />
@@ -423,7 +424,7 @@ export function HomeView() {
                 instant settlements.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-3">
+              <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-3">
                 <Button
                   size="lg"
                   onClick={() => navigate("trade")}
@@ -442,7 +443,7 @@ export function HomeView() {
                 </Button>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
+              <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2">
                 {HERO_STATS.map((s) => (
                   <span
                     key={s}
