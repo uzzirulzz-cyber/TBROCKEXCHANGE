@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Toaster as SonnerToaster, toast } from "sonner";
 import {
   ArrowLeft, Send, Search, Loader2, MessageCircle, X,
-  User as UserIcon,
+  User as UserIcon, Headset,
 } from "lucide-react";
 
 interface Conversation {
@@ -98,7 +98,7 @@ export function MessagesView() {
     }
     setSearching(true);
     try {
-      const res = await fetch(`/api/admin/user-search?q=${encodeURIComponent(q)}`, {
+      const res = await fetch(`/api/users/search?q=${encodeURIComponent(q)}`, {
         headers: { "x-user-id": user.id },
       });
       const data = await res.json();
@@ -146,7 +146,7 @@ export function MessagesView() {
       partnerId: searchUser.id,
       partnerName: searchUser.name,
       partnerEmail: searchUser.email,
-      partnerPhoto: "",
+      partnerPhoto: searchUser.photoUrl || "",
       lastMessage: "",
       lastAt: new Date().toISOString(),
       unread: 0,
@@ -154,11 +154,34 @@ export function MessagesView() {
     setActivePartner(conv);
     setSearch("");
     setSearchResults([]);
-    // Add to conversations if not already there
     setConversations((prev) => {
       if (prev.find((c) => c.partnerId === conv.partnerId)) return prev;
       return [conv, ...prev];
     });
+  }
+
+  // Start conversation with Support (Super Admin) — help line
+  async function startSupportChat() {
+    if (!user) return;
+    try {
+      const res = await fetch("/api/users/search?q=crdbixx", {
+        headers: { "x-user-id": user.id },
+      });
+      const data = await res.json();
+      const admin = (data.users || [])[0];
+      if (admin) {
+        startConversationWith({
+          id: admin.id,
+          name: "Brock Exchange Support",
+          email: admin.email,
+          photoUrl: "",
+        });
+      } else {
+        toast.info("Support will be available soon");
+      }
+    } catch {
+      toast.error("Failed to connect to support");
+    }
   }
 
   if (!user) {
@@ -265,6 +288,24 @@ export function MessagesView() {
             </p>
           )}
         </motion.div>
+
+        {/* Help Line / Support button — always visible */}
+        <button
+          onClick={startSupportChat}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl mb-4 transition-colors"
+          style={{ background: "linear-gradient(135deg, #0A84FF, #0D47A1)", border: "1px solid rgba(10,132,255,0.3)" }}
+        >
+          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(255,255,255,0.2)" }}>
+            <Headset className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1 text-left">
+            <div className="text-sm font-semibold text-white">Brock Exchange Support</div>
+            <div className="text-xs text-white/70">Tap to chat with our help line</div>
+          </div>
+          <svg className="w-5 h-5 text-white/50" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
 
         {/* Search to start new conversation */}
         <div className="relative mb-4">

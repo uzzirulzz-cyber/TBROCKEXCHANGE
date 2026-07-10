@@ -633,6 +633,149 @@ export function HomeView() {
           </div>
         </div>
       </section>
+
+      {/* 9. Earn Opportunities */}
+      <section className="py-16 border-t border-white/5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
+              Opportunities to Earn More
+            </h2>
+            <p className="text-sm text-muted-foreground text-center mb-8 max-w-xl mx-auto">
+              Maximize your earnings with these proven strategies on Brock Exchange
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: "🎯",
+                title: "Binary Trading",
+                desc: "Predict UP or DOWN on 10 cryptocurrencies. Win up to 50% returns in 30-120 seconds.",
+                payout: "Up to 50%",
+                color: "#0A84FF",
+              },
+              {
+                icon: "👥",
+                title: "Refer & Earn $30",
+                desc: "Invite friends with your referral code. You and your friend each earn $30 USD when they complete simple trade actions.",
+                payout: "$30 per friend",
+                color: "#30D158",
+              },
+              {
+                icon: "💎",
+                title: "VIP Rewards",
+                desc: "Trade more to climb VIP tiers — from VIP-1 to Prime_Diamond. Higher tiers unlock better payouts and exclusive perks.",
+                payout: "Up to 💎 Diamond",
+                color: "#BF5AF2",
+              },
+            ].map((opp, i) => (
+              <motion.div
+                key={opp.title}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="bx-glass rounded-2xl p-6 hover:bx-glow transition-all"
+              >
+                <div className="text-4xl mb-3">{opp.icon}</div>
+                <h3 className="text-lg font-bold text-white mb-2">{opp.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{opp.desc}</p>
+                <div
+                  className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold"
+                  style={{ background: `${opp.color}22`, color: opp.color }}
+                >
+                  {opp.payout}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10. Testimonials */}
+      <section className="py-16 border-t border-white/5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-2">
+              What Our Traders Say
+            </h2>
+            <p className="text-sm text-muted-foreground text-center mb-8">
+              Real stories from real Brock Exchange users
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Sarah K.",
+                role: "🥇 superVIP Trader",
+                avatar: "S",
+                avatarColor: "#0A84FF",
+                text: "I've been trading on Brock Exchange for 3 months. The 120s trades give me the best returns — I turned $100 into $150 in just 2 minutes!",
+                profit: "+$2,450",
+              },
+              {
+                name: "Ahmed R.",
+                role: "🥈 VIP-2 Trader",
+                avatar: "A",
+                avatarColor: "#30D158",
+                text: "The referral program is amazing. I invited 12 friends and earned $360 in referral bonuses alone. Plus my trades are winning consistently.",
+                profit: "+$1,830",
+              },
+              {
+                name: "Maria L.",
+                role: "💎 Prime_Diamond",
+                avatar: "M",
+                avatarColor: "#BF5AF2",
+                text: "As a Prime Diamond member, I get the best payouts and priority support. The live chart patterns help me make winning trades every day.",
+                profit: "+$5,120",
+              },
+            ].map((t, i) => (
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="bx-glass rounded-2xl p-6"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                    style={{ background: t.avatarColor }}
+                  >
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-white">{t.name}</div>
+                    <div className="text-xs text-muted-foreground">{t.role}</div>
+                  </div>
+                  <div className="ml-auto text-sm font-bold" style={{ color: "#30D158" }}>
+                    {t.profit}
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center gap-1 mt-3">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span key={star} className="text-sm" style={{ color: "#FFD60A" }}>★</span>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
