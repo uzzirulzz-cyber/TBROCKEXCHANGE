@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowUp, ArrowDown, ChevronDown, Loader2, CheckCircle2, XCircle,
   Clock, TrendingUp, TrendingDown, Activity, Timer, Home, Wallet as WalletIcon,
-  User, Settings, Search, MoreHorizontal, ArrowUpDown,
+  User, Settings, Search, MoreHorizontal, ArrowUpDown, Coins, ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -253,6 +253,7 @@ export function TradeView() {
 function MarketplaceStep({ coin, onSelectCoin, candles, lastPrice, change24h, onTradeNow, user }: any) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<"Coins" | "Tokens" | "Sites">("Coins");
   const up = change24h >= 0;
   const filtered = COINS.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.symbol.toLowerCase().includes(search.toLowerCase()));
   const watchlist = COINS.slice(0, 2); // BTC + ETH as watchlist
@@ -279,17 +280,21 @@ function MarketplaceStep({ coin, onSelectCoin, candles, lastPrice, change24h, on
         />
       </div>
 
-      {/* Pinned tabs — Coins / Tokens / Sites */}
+      {/* Pinned tabs — Coins / Tokens / Sites (functional) */}
       <div className="flex gap-6 mb-5 border-b" style={{ borderColor: T.border }}>
-        {["Coins", "Tokens", "Sites"].map((tab, i) => (
-          <button key={tab} className="pb-3 text-sm font-medium relative" style={{ color: i === 0 ? T.accent : T.textSec }}>
+        {(["Coins", "Tokens", "Sites"] as const).map((tab) => (
+          <button key={tab} onClick={() => setActiveTab(tab)}
+            className="pb-3 text-sm font-medium relative transition-colors"
+            style={{ color: activeTab === tab ? T.accent : T.textSec }}>
             {tab}
-            {i === 0 && <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: T.accent }} />}
+            {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full" style={{ background: T.accent }} />}
           </button>
         ))}
       </div>
 
-      {/* Watchlist — 2 cards side by side */}
+      {/* === COINS TAB === */}
+      {activeTab === "Coins" && (
+        <>
       <div className="mb-5">
         <h3 className="text-base font-semibold mb-3" style={{ color: T.text }}>Watchlist</h3>
         <div className="grid grid-cols-2 gap-3">
@@ -315,7 +320,6 @@ function MarketplaceStep({ coin, onSelectCoin, candles, lastPrice, change24h, on
         </div>
       </div>
 
-      {/* Trending coins — full list */}
       <div className="mb-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-semibold" style={{ color: T.text }}>Trending coins</h3>
@@ -341,6 +345,47 @@ function MarketplaceStep({ coin, onSelectCoin, candles, lastPrice, change24h, on
           })}
         </div>
       </div>
+        </>
+      )}
+
+      {/* === TOKENS TAB === */}
+      {activeTab === "Tokens" && (
+        <div className="py-12 text-center">
+          <div className="w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3" style={{ background: T.accentSoft }}>
+            <Coins className="w-7 h-7" style={{ color: T.accent }} />
+          </div>
+          <h3 className="text-base font-semibold mb-1" style={{ color: T.text }}>Token Listing Coming Soon</h3>
+          <p className="text-sm mb-4" style={{ color: T.textSec }}>We're adding ERC-20, BEP-20, and SPL token support.</p>
+          <button onClick={onTradeNow} className="px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ background: T.accent }}>
+            Trade Coins Instead
+          </button>
+        </div>
+      )}
+
+      {/* === SITES TAB === */}
+      {activeTab === "Sites" && (
+        <div className="space-y-3">
+          <p className="text-sm mb-3" style={{ color: T.textSec }}>Trusted partner sites for trading and DeFi:</p>
+          {[
+            { name: "Brock Exchange DEX", desc: "Decentralized trading with 0.3% fees", icon: "\uD83D\uDD04" },
+            { name: "Brock Staking Pool", desc: "Earn up to 12% APY on your crypto", icon: "\uD83D\uDC8E" },
+            { name: "Brock NFT Marketplace", desc: "Mint, buy, and sell NFTs", icon: "\uD83C\uDFA8" },
+            { name: "Brock Bridge", desc: "Cross-chain transfers at low fees", icon: "\uD83C\uDF09" },
+          ].map((site) => (
+            <button key={site.name}
+              onClick={() => toast.info(site.name + " \u2014 coming soon!")}
+              className="w-full flex items-center gap-3 p-4 rounded-xl transition-colors hover:bg-white/5"
+              style={{ background: T.card, border: `1px solid ${T.border}` }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl" style={{ background: T.accentSoft }}>{site.icon}</div>
+              <div className="flex-1 text-left">
+                <div className="text-sm font-medium" style={{ color: T.text }}>{site.name}</div>
+                <div className="text-xs" style={{ color: T.textSec }}>{site.desc}</div>
+              </div>
+              <ArrowRight className="w-4 h-4" style={{ color: T.textDim }} />
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Trade Now button — orange */}
       <button
