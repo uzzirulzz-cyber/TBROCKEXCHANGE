@@ -1078,18 +1078,22 @@ export function ProfileView() {
   const { user, navigate, logout, setUser } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [stats, setStats] = useState<{ income: number; expense: number }>({ income: 0, expense: 0 });
+  const [walletOverview, setWalletOverview] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
-    fetch("/api/wallet/transactions", { headers: { "x-user-id": user.id } })
-      .then((r) => r.json())
-      .then((d) => {
-        const deposits = (d.deposits || []).filter((t: any) => t.status === "APPROVED");
-        const withdrawals = (d.withdrawals || []).filter((t: any) => t.status === "APPROVED");
+    Promise.all([
+      fetch("/api/wallet/transactions", { headers: { "x-user-id": user.id } }).then((r) => r.json()),
+      fetch("/api/wallet", { headers: { "x-user-id": user.id } }).then((r) => r.json()),
+    ])
+      .then(([tx, w]) => {
+        const deposits = (tx.deposits || []).filter((t: any) => t.status === "APPROVED");
+        const withdrawals = (tx.withdrawals || []).filter((t: any) => t.status === "APPROVED");
         const income = deposits.reduce((s: number, t: any) => s + Number(t.amount), 0);
         const expense = withdrawals.reduce((s: number, t: any) => s + Number(t.amount), 0);
         setStats({ income, expense });
+        if (w.overview) setWalletOverview(w.overview);
       })
       .catch(() => {});
   }, [user]);
@@ -1126,9 +1130,42 @@ export function ProfileView() {
   }
 
   return (
-    <main className="flex-1 pt-14 pb-10 bg-black min-h-screen" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
+    <main className="flex-1 pt-14 pb-10 min-h-screen" style={{ background: "#0A192F", fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif' }}>
       <SonnerToaster richColors position="top-center" />
       <div className="mx-auto max-w-md lg:max-w-2xl px-4">
+
+        {/* Balance card — teal-to-blue gradient (e-wallet style) */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl overflow-hidden p-6 mb-4 mt-6 relative"
+          style={{ background: "linear-gradient(135deg, #00B4DB 0%, #0083B0 100%)" }}>
+          <div className="text-white/70 text-xs font-medium uppercase tracking-wider">Total Balance</div>
+          <div className="text-white text-4xl font-bold mt-1 tabular-nums">
+            ${((walletOverview?.totalAssetValue ?? 0)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          </div>
+          <div className="text-white/60 text-xs mt-1">
+            Available: ${((walletOverview?.availableBalance ?? 0)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            {" · "}Frozen: ${((walletOverview?.frozenFunds ?? 0)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          </div>
+          {/* Quick actions — white circles */}
+          <div className="grid grid-cols-4 gap-3 mt-5">
+            {[
+              { icon: Plus, label: "Deposit", onClick: () => navigate("deposit") },
+              { icon: ArrowUpFromLine, label: "Withdraw", onClick: () => navigate("withdraw") },
+              { icon: ArrowLeftRight, label: "Trade", onClick: () => navigate("trade") },
+              { icon: WalletIcon, label: "Wallet", onClick: () => navigate("wallet") },
+            ].map((btn) => {
+              const Icon = btn.icon;
+              return (
+                <button key={btn.label} onClick={btn.onClick} className="flex flex-col items-center gap-1.5">
+                  <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    <Icon className="w-5 h-5" style={{ color: "#007BFF" }} />
+                  </div>
+                  <span className="text-[10px] font-medium text-white">{btn.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 pt-6">
