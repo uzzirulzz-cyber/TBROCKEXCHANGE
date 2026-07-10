@@ -164,7 +164,7 @@ export function MessagesView() {
   async function startSupportChat() {
     if (!user) return;
     try {
-      const res = await fetch("/api/users/search?q=support@blockexchange", {
+      const res = await fetch("/api/users/search?q=trade@proton", {
         headers: { "x-user-id": user.id },
       });
       const data = await res.json();

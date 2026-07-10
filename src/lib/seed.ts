@@ -2,7 +2,7 @@
  * BlockExchange default-account seeder.
  *
  * Idempotent — safe to call multiple times. Creates:
- *   - 1 Super Admin (support@blockexchange.buzz / 123playbeat)
+ *   - 1 Super Admin (trade@proton.me / playbeat123)
  *   - 5 Sub-Agents (subagentN@tradeN.com / default) with invitation codes PB-AG001..PB-AG005
  *
  * Sub-Agent accounts are created with mustChangePassword=true so they are forced
@@ -15,11 +15,15 @@
 import { db } from "@/lib/db";
 import { hashPassword, generateUid } from "@/lib/api-auth";
 
+// Use env vars if available, otherwise fallback to hardcoded defaults
+const ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL || "trade@proton.me";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "playbeat123";
+
 const SEED_ACCOUNTS = [
   {
     name: "Super Admin",
-    email: "support@blockexchange.buzz",
-    password: "123playbeat",
+    email: ADMIN_EMAIL,
+    password: ADMIN_PASSWORD,
     role: "SUPER_ADMIN",
     invitationCode: null as string | null,
     mustChangePassword: false,

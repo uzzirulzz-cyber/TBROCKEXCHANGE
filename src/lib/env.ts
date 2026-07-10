@@ -22,6 +22,11 @@ const DEFAULTS: Record<string, string> = {
   // MongoDB Atlas (price history caching)
   MONGODB_URI:
     "mongodb+srv://playbeatdigitalxx:playbeat1122@ghar.ahbfod0.mongodb.net/?appName=ghar",
+  // JWT refresh secret
+  JWT_REFRESH_SECRET: "PlayBeatJWT_SuperSecret_ADcx",
+  // Super Admin credentials (used by seeder)
+  SUPER_ADMIN_EMAIL: "trade@proton.me",
+  ADMIN_PASSWORD: "playbeat123",
 };
 
 // Only set env vars that are not already defined by the hosting platform.
