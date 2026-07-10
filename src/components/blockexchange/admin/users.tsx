@@ -20,7 +20,7 @@ import {
   Search, Users as UsersIcon, ShieldCheck, Snowflake, MoreHorizontal,
   Lock, KeyRound, History, BadgeCheck, Ban, RefreshCw, DollarSign,
   TrendingUp, TrendingDown, Bell, Eye, Loader2, Wallet, Mail, Phone,
-  Globe, Calendar, User as UserIcon, AlertCircle,
+  Globe, Calendar, User as UserIcon, AlertCircle, Ticket, Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -418,15 +418,22 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 {[
                   { label: "UID", value: profileUser.uid || "—", icon: UserIcon },
+                  { label: "Name", value: profileUser.name, icon: UserIcon },
+                  { label: "Email", value: profileUser.email, icon: Mail },
+                  { label: "Mobile", value: profileUser.phone || "Not set", icon: Phone },
                   { label: "Role", value: profileUser.role, icon: ShieldCheck },
                   { label: "Balance", value: `$${fmtMoney(profileUser.balance, 2)}`, icon: Wallet },
                   { label: "Frozen Funds", value: `$${fmtMoney(profileUser.frozenFunds || 0, 2)}`, icon: Snowflake },
                   { label: "VIP Level", value: getVipLabel(profileUser.vipLevel), icon: BadgeCheck },
-                  { label: "KYC Status", value: profileUser.kycStatus || "PENDING", icon: ShieldCheck },
-                  { label: "Phone", value: profileUser.phone || "Not set", icon: Phone },
+                  { label: "KYC", value: profileUser.kycStatus || "PENDING", icon: ShieldCheck },
+                  { label: "Account", value: profileUser.frozen ? "FROZEN" : (profileUser.status || "ACTIVE"), icon: Lock },
                   { label: "Country", value: profileUser.country || "Not set", icon: Globe },
                   { label: "Trades", value: String(profileUser.tradesCount), icon: TrendingUp },
-                  { label: "Status", value: profileUser.frozen ? "FROZEN" : (profileUser.status || "ACTIVE"), icon: Lock },
+                  { label: "Invitation Code", value: (profileUser as any).invitationCode || "—", icon: Ticket },
+                  { label: "Referral Code", value: (profileUser as any).invitationCode || "—", icon: Ticket },
+                  { label: "Sub-Agent", value: (profileUser as any).linkedSubAgentId || "—", icon: UserIcon },
+                  { label: "Last Login", value: (profileUser as any).lastLoginAt ? new Date((profileUser as any).lastLoginAt).toLocaleString() : "Never", icon: Clock },
+                  { label: "Member Since", value: profileUser.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "—", icon: Calendar },
                 ].map((f) => (
                   <div key={f.label} className="flex items-center gap-2 p-2.5 rounded-lg bg-white/[0.02]">
                     <f.icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />

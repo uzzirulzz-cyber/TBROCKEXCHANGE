@@ -34,6 +34,8 @@ export async function GET(req: NextRequest) {
       status: u.status,
       frozen: u.frozen,
       walletLocked: u.walletLocked,
+      invitationCode: u.invitationCode,
+      linkedSubAgentId: u.linkedSubAgentId,
       lastLoginAt: u.lastLoginAt,
       createdAt: u.createdAt,
       tradesCount: u._count.trades,
