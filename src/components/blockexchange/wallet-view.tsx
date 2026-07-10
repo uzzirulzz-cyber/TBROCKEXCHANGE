@@ -50,20 +50,20 @@ function useLivePrices() {
   return prices;
 }
 
-// iPhone-style theme tokens — matches Profile/Settings views
+// E-Wallet theme tokens — matching itexus.com e-wallet design
 const T = {
-  bg: "#000000",              // pure black
-  card: "#1C1C1E",            // iOS system gray 6
-  border: "#38383A",          // iOS separator
-  accent: "#0A84FF",          // iOS system blue
-  accentLight: "#0A84FF",
-  gradientFrom: "#0A84FF",    // iOS blue gradient
-  gradientTo: "#0D47A1",      // deep blue
-  positive: "#30D158",        // iOS system green
-  negative: "#FF453A",        // iOS system red
+  bg: "#0A192F",              // dark blue background
+  card: "#132F4C",            // dark blue card (slightly lighter than bg)
+  border: "#1E3A5F",          // card border
+  accent: "#007BFF",          // bright blue accent
+  accentLight: "#007BFF",
+  gradientFrom: "#00B4DB",    // teal — balance card gradient top
+  gradientTo: "#0083B0",      // blue — balance card gradient bottom
+  positive: "#28A745",        // green — inflow
+  negative: "#DC3545",        // red — outflow
   text: "#FFFFFF",
-  textSec: "#8E8E93",         // iOS tertiary label
-  textDim: "#48484A",
+  textSec: "#CCCCCC",         // light gray secondary text
+  textDim: "#5A7A9B",         // muted blue-gray
 };
 
 export function WalletView() {
@@ -136,15 +136,15 @@ export function WalletView() {
   return (
     <>
       <SonnerToaster richColors position="top-center" />
-      <main className="flex-1 pt-14 pb-24" style={{ background: "#000000", minHeight: "100vh" }}>
+      <main className="flex-1 pt-14 pb-24" style={{ background: T.bg, minHeight: "100vh" }}>
         <div className="mx-auto w-full max-w-[430px] px-4">
 
-          {/* ===== HERO HEADER (blue gradient #1A73E8 → #4285F4) ===== */}
+          {/* ===== HERO HEADER (teal-to-blue gradient — e-wallet card) ===== */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative rounded-3xl overflow-hidden p-6 mb-4"
-            style={{ background: "linear-gradient(180deg, #1A73E8 0%, #4285F4 100%)" }}
+            style={{ background: `linear-gradient(135deg, ${T.gradientFrom} 0%, ${T.gradientTo} 100%)` }}
           >
             {/* User row */}
             <div className="relative flex items-center justify-between mb-5">
@@ -207,7 +207,7 @@ export function WalletView() {
                     className="flex flex-col items-center gap-1.5 disabled:opacity-40"
                   >
                     <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-sm">
-                      <Icon className="w-5 h-5" style={{ color: "#1A73E8" }} />
+                      <Icon className="w-5 h-5" style={{ color: T.accent }} />
                     </div>
                     <span className="text-[10px] font-medium text-white">{btn.label}</span>
                   </button>
@@ -222,7 +222,7 @@ export function WalletView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
             className="rounded-2xl p-4 mb-4 relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #10B981 0%, #34D399 100%)" }}
+            style={{ background: "linear-gradient(135deg, #28A745 0%, #20C997 100%)" }}
           >
             <div className="text-white font-bold text-base mb-1">Refer And Get $30 USD</div>
             <div className="text-white/80 text-xs mb-3 leading-relaxed">
