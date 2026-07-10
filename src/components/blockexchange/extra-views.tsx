@@ -1280,8 +1280,8 @@ export function ProfileView() {
           <div className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider px-4 mb-2">Account Details</div>
           <div className="rounded-2xl overflow-hidden" style={{ background: "#1C1C1E", border: "1px solid #38383A" }}>
             {[
-              { icon: Mail, label: "Email", value: user.email, color: "#0A84FF" },
-              { icon: Phone, label: "Phone", value: user.phone || "Not set", color: "#30D158" },
+              { icon: Mail, label: "Email (fixed)", value: user.email, color: "#0A84FF" },
+              { icon: Phone, label: "Phone (fixed)", value: user.phone || "Not set", color: "#30D158" },
               { icon: Globe, label: "Country", value: user.country || "Not set", color: "#BF5AF2" },
               { icon: Shield, label: "KYC Status", value: user.kycStatus || "Not verified", color: user.kycStatus === "VERIFIED" ? "#30D158" : "#FF9F0A" },
               { icon: Lock, label: "Account Status", value: user.status || "Active", color: "#30D158" },
@@ -1512,7 +1512,7 @@ export function NotificationsView() {
 export function SettingsView() {
   const { user, navigate, logout, setUser } = useAuth();
   const [name, setName] = useState(user?.name || "");
-  const [phone, setPhone] = useState(user?.phone || "");
+  const [phone] = useState(user?.phone || ""); // fixed — not editable
   const [country, setCountry] = useState(user?.country || "");
   const [saving, setSaving] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
@@ -1648,17 +1648,18 @@ export function SettingsView() {
               />
             </div>
             <div className="px-4 py-3.5" style={{ borderBottom: "1px solid #38383A" }}>
-              <div className="text-xs text-[#8E8E93] mb-1.5">Email (cannot change)</div>
-              <div className="text-white text-base opacity-50">{user.email}</div>
+              <div className="text-xs text-[#8E8E93] mb-1.5">Email (fixed — cannot change)</div>
+              <div className="text-white text-base opacity-50 flex items-center gap-2">
+                <Lock className="w-3.5 h-3.5" style={{ color: "#8E8E93" }} />
+                {user.email}
+              </div>
             </div>
             <div className="px-4 py-3.5" style={{ borderBottom: "1px solid #38383A" }}>
-              <div className="text-xs text-[#8E8E93] mb-1.5">Phone</div>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Not set"
-                className="w-full bg-transparent text-white text-base outline-none"
-              />
+              <div className="text-xs text-[#8E8E93] mb-1.5">Phone (fixed — cannot change)</div>
+              <div className="text-white text-base opacity-50 flex items-center gap-2">
+                <Lock className="w-3.5 h-3.5" style={{ color: "#8E8E93" }} />
+                {user.phone || "Not set"}
+              </div>
             </div>
             <div className="px-4 py-3.5">
               <div className="text-xs text-[#8E8E93] mb-1.5">Country</div>
