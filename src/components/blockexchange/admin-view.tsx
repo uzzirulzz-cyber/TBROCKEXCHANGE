@@ -110,7 +110,7 @@ export function AdminView() {
   };
 
   return (
-    <main className="flex-1 pt-20 pb-10 bx-fade-in">
+    <main className="flex-1 pt-20 pb-10 bx-fade-in" style={{ background: "#f8f9fa", minHeight: "calc(100vh - 5rem)" }}>
       <SonnerToaster position="top-right" richColors />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
@@ -127,15 +127,15 @@ export function AdminView() {
 
           {/* Right column */}
           <div className="min-w-0">
-            {/* Title bar */}
-            <div className="bx-glass rounded-2xl p-4 mb-5 flex flex-wrap items-center justify-between gap-3">
+            {/* Title bar — light theme */}
+            <div className="rounded-2xl p-4 mb-5 flex flex-wrap items-center justify-between gap-3" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-lg bg-[#0ea5ff]/15 text-[#0ea5ff] ring-1 ring-[#0ea5ff]/30 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4.5 h-4.5" />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "#1e3a8a" }}>
+                  <ShieldCheck className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h1 className="text-base font-semibold text-white truncate">{meta.title}</h1>
-                  <p className="text-xs text-muted-foreground truncate">{meta.description}</p>
+                  <h1 className="text-base font-semibold truncate" style={{ color: "#1e3a8a" }}>{meta.title}</h1>
+                  <p className="text-xs truncate" style={{ color: "#6b7280" }}>{meta.description}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -143,19 +143,19 @@ export function AdminView() {
                   size="sm"
                   variant="outline"
                   onClick={handleSync}
-                  className="text-muted-foreground hover:text-white"
+                  style={{ color: "#6b7280", borderColor: "#e5e7eb" }}
                   title="Re-fetch data from server"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   Sync
                 </Button>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bx-glass-soft">
-                  <div className="w-7 h-7 rounded-full bx-blue-gradient flex items-center justify-center text-xs font-bold text-white">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: "#f3f4f6" }}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: "#1e3a8a" }}>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="text-xs leading-tight">
-                    <div className="font-medium text-white">{user.name}</div>
-                    <div className="text-[#0ea5ff] uppercase tracking-wider text-[10px]">Administrator</div>
+                    <div className="font-medium" style={{ color: "#374151" }}>{user.name}</div>
+                    <div className="uppercase tracking-wider text-[10px]" style={{ color: "#1e3a8a" }}>Administrator</div>
                   </div>
                 </div>
               </div>

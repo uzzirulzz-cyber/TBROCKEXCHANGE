@@ -20,7 +20,7 @@ import {
   Search, Users as UsersIcon, ShieldCheck, Snowflake, MoreHorizontal,
   Lock, KeyRound, History, BadgeCheck, Ban, RefreshCw, DollarSign,
   TrendingUp, TrendingDown, Bell, Eye, Loader2, Wallet, Mail, Phone,
-  Globe, Calendar, User as UserIcon,
+  Globe, Calendar, User as UserIcon, AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -509,6 +509,13 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
             <DialogDescription>Send a notification to {notifUser?.name}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Warning alert */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[#FF9F0A]/10 border border-[#FF9F0A]/30">
+              <AlertCircle className="w-4 h-4 text-[#FF9F0A] shrink-0 mt-0.5" />
+              <div className="text-xs text-[#FF9F0A]">
+                <strong>Warning:</strong> This notification will be sent immediately to the user's notification center. Make sure the content is appropriate — the user will see this as a push-style alert in their Messages and Notifications tabs.
+              </div>
+            </div>
             <div>
               <Label className="text-xs text-muted-foreground">Title</Label>
               <Input
@@ -535,10 +542,10 @@ export function AdminUsers({ userId, syncTick }: UsersProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0a1428] border-white/10">
-                  <SelectItem value="info">Info</SelectItem>
-                  <SelectItem value="success">Success</SelectItem>
-                  <SelectItem value="warning">Warning</SelectItem>
-                  <SelectItem value="error">Error</SelectItem>
+                  <SelectItem value="info">ℹ️ Info</SelectItem>
+                  <SelectItem value="success">✅ Success</SelectItem>
+                  <SelectItem value="warning">⚠️ Warning</SelectItem>
+                  <SelectItem value="error">❌ Error</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -65,12 +65,12 @@ interface SidebarProps {
 export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: SidebarProps) {
   return (
     <aside className="lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)]">
-      {/* Desktop sidebar */}
-      <div className="hidden lg:flex flex-col bx-glass rounded-2xl p-4 h-full">
-        <div className="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-white/5">
+      {/* Desktop sidebar — light theme */}
+      <div className="hidden lg:flex flex-col rounded-2xl p-4 h-full" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+        <div className="flex items-center gap-3 px-2 pb-4 mb-2 border-b" style={{ borderColor: "#e5e7eb" }}>
           <Logo size={36} tagline={false} />
           <div>
-            <div className="text-sm font-semibold text-white leading-tight">Admin Panel</div>
+            <div className="text-sm font-semibold leading-tight" style={{ color: "#1e3a8a" }}>Admin Panel</div>
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Brock Exchange</div>
           </div>
         </div>
@@ -81,7 +81,7 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
             if (!items.length) return null;
             return (
               <div key={group}>
-                <div className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <div className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9ca3af" }}>
                   {group}
                 </div>
                 <div className="space-y-1">
@@ -95,11 +95,12 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
                         className={cn(
                           "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all relative",
                           isActive
-                            ? "bx-glass text-white bx-glow border-l-2 border-[#0ea5ff]"
-                            : "text-muted-foreground hover:text-white hover:bg-white/5 border-l-2 border-transparent"
+                            ? "text-white border-l-2 border-[#1e3a8a]"
+                            : "border-l-2 border-transparent"
                         )}
+                        style={isActive ? { background: "#1e3a8a" } : { color: "#6b7280" }}
                       >
-                        <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#0ea5ff]" : "")} />
+                        <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-white" : "")} />
                         <span className="truncate">{item.label}</span>
                       </button>
                     );
@@ -110,11 +111,12 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
           })}
         </nav>
 
-        <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
+        <div className="pt-4 mt-4 space-y-2" style={{ borderTop: "1px solid #e5e7eb" }}>
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start text-muted-foreground hover:text-white"
+            className="w-full justify-start"
+            style={{ color: "#6b7280" }}
             onClick={onBackToSite}
           >
             <ArrowLeft className="w-4 h-4" />
