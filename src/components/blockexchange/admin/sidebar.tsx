@@ -65,13 +65,13 @@ interface SidebarProps {
 export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: SidebarProps) {
   return (
     <aside className="lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)]">
-      {/* Desktop sidebar — light theme */}
-      <div className="hidden lg:flex flex-col rounded-2xl p-4 h-full" style={{ background: "#ffffff", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-        <div className="flex items-center gap-3 px-2 pb-4 mb-2 border-b" style={{ borderColor: "#e5e7eb" }}>
-          <Logo size={36} tagline={false} />
+      {/* Desktop sidebar — dark theme matching screenshot (#1E1E2E) */}
+      <div className="hidden lg:flex flex-col rounded-lg p-4 h-full" style={{ background: "#1E1E2E", borderRadius: "8px" }}>
+        <div className="flex items-center gap-3 px-2 pb-4 mb-2" style={{ borderBottom: "1px solid #2A2A3E" }}>
+          <Logo size={32} tagline={false} />
           <div>
-            <div className="text-sm font-semibold leading-tight" style={{ color: "#1e3a8a" }}>Admin Panel</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Brock Exchange</div>
+            <div className="text-sm font-bold leading-tight text-white">Admin Panel</div>
+            <div className="text-[10px] uppercase tracking-wider" style={{ color: "#FFFFFF80" }}>Brock Exchange</div>
           </div>
         </div>
 
@@ -81,7 +81,7 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
             if (!items.length) return null;
             return (
               <div key={group}>
-                <div className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#9ca3af" }}>
+                <div className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#FFFFFF60" }}>
                   {group}
                 </div>
                 <div className="space-y-1">
@@ -92,15 +92,14 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
                       <button
                         key={item.id}
                         onClick={() => onSelect(item.id)}
-                        className={cn(
-                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all relative",
-                          isActive
-                            ? "text-white border-l-2 border-[#1e3a8a]"
-                            : "border-l-2 border-transparent"
-                        )}
-                        style={isActive ? { background: "#1e3a8a" } : { color: "#6b7280" }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                        style={{
+                          background: isActive ? "#2A2A3E" : "transparent",
+                          color: isActive ? "#FFFFFF" : "#FFFFFF80",
+                          borderLeft: isActive ? "2px solid #4A90E2" : "2px solid transparent",
+                        }}
                       >
-                        <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-white" : "")} />
+                        <Icon className="w-4 h-4 shrink-0" style={{ color: isActive ? "#4A90E2" : "#FFFFFF80" }} />
                         <span className="truncate">{item.label}</span>
                       </button>
                     );
@@ -111,12 +110,12 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
           })}
         </nav>
 
-        <div className="pt-4 mt-4 space-y-2" style={{ borderTop: "1px solid #e5e7eb" }}>
+        <div className="pt-4 mt-4 space-y-2" style={{ borderTop: "1px solid #2A2A3E" }}>
           <Button
             variant="ghost"
             size="sm"
             className="w-full justify-start"
-            style={{ color: "#6b7280" }}
+            style={{ color: "#FFFFFF80" }}
             onClick={onBackToSite}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -125,7 +124,8 @@ export function AdminSidebar({ active, onSelect, onBackToSite, onLogout }: Sideb
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start text-[#ff3b30] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10"
+            className="w-full justify-start"
+            style={{ color: "#E74C3C" }}
             onClick={onLogout}
           >
             <LogOut className="w-4 h-4" />
