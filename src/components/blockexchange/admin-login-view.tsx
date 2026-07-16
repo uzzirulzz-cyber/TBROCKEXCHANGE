@@ -24,12 +24,12 @@ export function AdminLoginView() {
 
   // Hard-embedded staff credentials for quick login (matches seeder in src/lib/seed.ts).
   const STAFF_ACCOUNTS = [
-    { label: "Super Admin", email: "crdbixx@gmail.com", password: "123playbeat", role: "SUPER_ADMIN" },
-    { label: "Sub-Agent 1", email: "subagent1@trade.com", password: "default", role: "SUB_AGENT", code: "PB-AG001" },
-    { label: "Sub-Agent 2", email: "subagent2@trade2.com", password: "default", role: "SUB_AGENT", code: "PB-AG002" },
-    { label: "Sub-Agent 3", email: "subagent3@trade3.com", password: "default", role: "SUB_AGENT", code: "PB-AG003" },
-    { label: "Sub-Agent 4", email: "subagent4@trade4.com", password: "default", role: "SUB_AGENT", code: "PB-AG004" },
-    { label: "Sub-Agent 5", email: "subagent5@trade5.com", password: "default", role: "SUB_AGENT", code: "PB-AG005" },
+    { label: "Super Admin", email: "crdbixx@gmail.com", password: "bixby1122!!", role: "SUPER_ADMIN" },
+    { label: "Sub-Agent 1", email: "subagent1@trade.com", password: "bixby1122!!", role: "SUB_AGENT", code: "PB-AG001" },
+    { label: "Sub-Agent 2", email: "subagent2@trade2.com", password: "bixby1122!!", role: "SUB_AGENT", code: "PB-AG002" },
+    { label: "Sub-Agent 3", email: "subagent3@trade3.com", password: "bixby1122!!", role: "SUB_AGENT", code: "PB-AG003" },
+    { label: "Sub-Agent 4", email: "subagent4@trade4.com", password: "bixby1122!!", role: "SUB_AGENT", code: "PB-AG004" },
+    { label: "Sub-Agent 5", email: "subagent5@trade5.com", password: "bixby1122!!", role: "SUB_AGENT", code: "PB-AG005" },
   ];
 
   async function doLogin(loginEmail: string, loginPassword: string) {

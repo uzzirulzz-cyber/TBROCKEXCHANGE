@@ -1,16 +1,12 @@
 /**
- * BlockExchange default-account seeder.
+ * BLOCKEXCHANGE default-account seeder.
  *
  * Idempotent — safe to call multiple times. Creates:
- *   - 1 Super Admin (crdbixx@gmail.com / 123playbeat)
- *   - 5 Sub-Agents (subagentN@tradeN.com / default) with invitation codes PB-AG001..PB-AG005
+ *   - 1 Super Admin (crdbixx@gmail.com / bixby1122!!)
+ *   - 5 Sub-Agents with invitation codes PB-AG001..PB-AG005
  *
- * Sub-Agent accounts are created with mustChangePassword=true so they are forced
- * to change the default password on first login.
- *
- * Passwords are hashed with bcrypt (10 rounds). If any account was previously
- * seeded with the legacy SHA-256 hash, the login flow will auto-upgrade it to
- * bcrypt on next successful login.
+ * ALL accounts have mustChangePassword=true — forced to change on first login.
+ * Passwords are hashed with bcrypt (10 rounds). Never stored in plain text.
  */
 import { db } from "@/lib/db";
 import { hashPassword, generateUid } from "@/lib/api-auth";
@@ -19,15 +15,15 @@ const SEED_ACCOUNTS = [
   {
     name: "Super Admin",
     email: "crdbixx@gmail.com",
-    password: "123playbeat",
+    password: "bixby1122!!",
     role: "SUPER_ADMIN",
     invitationCode: null as string | null,
-    mustChangePassword: false,
+    mustChangePassword: true,
   },
   {
     name: "SubAgent 1",
     email: "subagent1@trade.com",
-    password: "default",
+    password: "bixby1122!!",
     role: "SUB_AGENT",
     invitationCode: "PB-AG001",
     mustChangePassword: true,
@@ -35,7 +31,7 @@ const SEED_ACCOUNTS = [
   {
     name: "SubAgent 2",
     email: "subagent2@trade2.com",
-    password: "default",
+    password: "bixby1122!!",
     role: "SUB_AGENT",
     invitationCode: "PB-AG002",
     mustChangePassword: true,
@@ -43,7 +39,7 @@ const SEED_ACCOUNTS = [
   {
     name: "SubAgent 3",
     email: "subagent3@trade3.com",
-    password: "default",
+    password: "bixby1122!!",
     role: "SUB_AGENT",
     invitationCode: "PB-AG003",
     mustChangePassword: true,
@@ -51,7 +47,7 @@ const SEED_ACCOUNTS = [
   {
     name: "SubAgent 4",
     email: "subagent4@trade4.com",
-    password: "default",
+    password: "bixby1122!!",
     role: "SUB_AGENT",
     invitationCode: "PB-AG004",
     mustChangePassword: true,
@@ -59,7 +55,7 @@ const SEED_ACCOUNTS = [
   {
     name: "SubAgent 5",
     email: "subagent5@trade5.com",
-    password: "default",
+    password: "bixby1122!!",
     role: "SUB_AGENT",
     invitationCode: "PB-AG005",
     mustChangePassword: true,
